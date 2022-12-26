@@ -12,19 +12,25 @@ namespace RestaurantBL.Model
     {
         public int Id { get; private set; }
         public string Naam { get; private set; }
-        public Contactgegevens Contactgegevens { get; set; }
+        public string Email { get; set; }
+        public string Telefoonnummer { get; set; }
         public Locatie Locatie { get; set; }
 
-        public Gebruiker(string naam, Contactgegevens contactgegevens, Locatie locatie)
-        {
-            ZetNaam(naam);
-            Contactgegevens = contactgegevens;
-            Locatie = locatie;
-        }
-        
-        public Gebruiker(int id, string naam, Contactgegevens contactgegevens, Locatie locatie) : this(naam, contactgegevens, locatie)
+        public Gebruiker(int id, string naam, string email, string telefoonnummer, Locatie locatie)
         {
             ZetId(id);
+            ZetNaam(naam);
+            ZetEmail(email);
+            ZetTelefoonnummer(telefoonnummer);
+            Locatie = locatie;
+        }
+
+        public Gebruiker(string naam, string email, string telefoonnummer, Locatie locatie)
+        {
+            ZetNaam(naam);
+            ZetEmail(email);
+            ZetTelefoonnummer(telefoonnummer);
+            Locatie = locatie;
         }
 
         public void ZetNaam(string naam)
@@ -37,6 +43,21 @@ namespace RestaurantBL.Model
         {
             if (id <= 0) throw new GebruikerException("ZetId - Id < 0");
             Id = id;
+        }
+
+        public void ZetEmail(string email)
+        {
+
+            if (string.IsNullOrWhiteSpace(email)) throw new GebruikerException("ZetEmail - Email mag niet leeg zijn");
+            if (!EmailChecker.CheckEmail(email)) throw new GebruikerException("ZetEmail - Email is niet geldig");
+            Email = email;
+        }
+
+        public void ZetTelefoonnummer(string telefoonnummer)
+        {
+            if (string.IsNullOrWhiteSpace(telefoonnummer)) throw new GebruikerException("ZetTelefoonnummer - Telefoonnummer mag niet leeg zijn");
+            if (!TelefoonChecker.CheckTelefoon(telefoonnummer)) throw new GebruikerException("ZetTelefoonnummer - Telefoonnummer is niet geldig");
+            Telefoonnummer = telefoonnummer;
         }
     }
 }

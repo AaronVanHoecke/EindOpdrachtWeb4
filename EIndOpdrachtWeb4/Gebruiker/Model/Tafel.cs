@@ -9,14 +9,16 @@ namespace RestaurantBL.Model
 {
     public class Tafel
     {
-        public int AantalStoelen { get; private set; }
         public int ID { get; private set; }
+        public int RestaurantID { get; private set; }
+        public int AantalStoelen { get; private set; }
         public bool Beschikbaar { get; set; }
-        public Tafel(int aantalStoelen, int id, bool beschikbaar)
+        public Tafel(int aantalStoelen, int id, bool beschikbaar, int restaurantID)
         {
             ZetStoelen(aantalStoelen);
             ZetId(id);
             Beschikbaar = beschikbaar;
+            RestaurantID = restaurantID;
         }
 
         public void ZetStoelen(int aantalStoelen)

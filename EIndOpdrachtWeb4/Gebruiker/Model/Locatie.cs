@@ -9,6 +9,7 @@ namespace RestaurantBL.Model
 {
     public class Locatie
     {
+        public int LocatieId { get; private set; }
         public int Postcode { get; private set; }
         public string GemeenteNaam { get; private set; }
         public string StraatNaam { get; set; }
@@ -20,10 +21,11 @@ namespace RestaurantBL.Model
             ZetGemeenteNaam(gemeenteNaam);
         }
 
-        public Locatie(int postcode, string gemeenteNaam, string straatNaam, string huisnummer) : this(postcode, gemeenteNaam)
+        public Locatie(int postcode, string gemeenteNaam, string straatNaam, string huisnummer, int Id) : this(postcode, gemeenteNaam)
         {
             StraatNaam = straatNaam;
             Huisnummer = huisnummer;
+            LocatieId = Id;
         }
 
         public void ZetPostcode(int postcode)

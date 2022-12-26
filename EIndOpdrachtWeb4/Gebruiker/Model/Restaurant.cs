@@ -1,4 +1,5 @@
-﻿using RestaurantBL.Exceptions;
+﻿using RestaurantBL.Checkers;
+using RestaurantBL.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,27 +10,54 @@ namespace RestaurantBL.Model
 {
     public class Restaurant
     {
+        public int ID { get; private set; }
         public string Naam { get; private set; }
         public Locatie Locatie { get; set; }
         public string Keuken { get; set; }
-        public Contactgegevens Contactgegevens { get; set; }
-        private List<Reservatie> Reserveringen { get; set; }
-        private List<Tafel> Tafels { get; set; }
+        public string Telefoonnummer { get; set; }
+        public string Email { get; set; }
+        public List<Reservatie> Reserveringen { get; private set; }
+        public List<Tafel> Tafels { get; private set; }
 
-        public Restaurant(string naam, Locatie locatie, string keuken, Contactgegevens contactgegevens)
+        public Restaurant(string naam, Locatie locatie, string keuken, string telefoonnummer, string email)
         {
             ZetNaam(naam);
             Locatie = locatie;
             Keuken = keuken;
-            Contactgegevens = contactgegevens;
-            Reserveringen = new List<Reservatie>();
-            Tafels = new List<Tafel>();
+            ZetTelefoonnummer(telefoonnummer);
+            ZetEmail(email);
+        }
+
+        public Restaurant(int iD, string naam, Locatie locatie, string keuken, string telefoonnummer, string email, List<Reservatie> reserveringen, List<Tafel> tafels)
+        {
+            ID = iD;
+            Naam = naam;
+            Locatie = locatie;
+            Keuken = keuken;
+            Telefoonnummer = telefoonnummer;
+            Email = email;
+            Reserveringen = reserveringen;
+            Tafels = tafels;
         }
 
         public void ZetNaam(string naam)
         {
             if (!string.IsNullOrWhiteSpace(naam)) throw new RestaurantException("Naam mag niet leeg zijn");
             Naam = naam;
+        }
+        public void ZetEmail(string email)
+        {
+
+            if (string.IsNullOrWhiteSpace(email)) throw new GebruikerException("ZetEmail - Email mag niet leeg zijn");
+            if (!EmailChecker.CheckEmail(email)) throw new GebruikerException("ZetEmail - Email is niet geldig");
+            Email = email;
+        }
+
+        public void ZetTelefoonnummer(string telefoonnummer)
+        {
+            if (string.IsNullOrWhiteSpace(telefoonnummer)) throw new GebruikerException("ZetTelefoonnummer - Telefoonnummer mag niet leeg zijn");
+            if (!TelefoonChecker.CheckTelefoon(telefoonnummer)) throw new GebruikerException("ZetTelefoonnummer - Telefoonnummer is niet geldig");
+            Telefoonnummer = telefoonnummer;
         }
     }
 }

@@ -1,29 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RestaurantBL.Model
+namespace RestaurantDL.Model
 {
-    public class Reservatie
+    public class ReservatieEF
     {
-        public int ReservatieID { get; set; }
-        public Restaurant RestaurantInfo { get; set; }
-
-        public Gebruiker ContactPersoon { get; set; }
-
+        [Key]
+        public int ID { get; set; }
+        [Required]
+        public RestaurantEF RestaurantInfo { get; set; }
+        [Required]
+        public GebruikerEF ContactPersoon { get; set; }
+        [Required]
         public int AantalPlaatsen { get; set; }
-
+        [Required]
         public DateTime Datum { get; set; }
-
+        [Required]
         public int Uur { get; set; }
-
+        [Required]
         public int Tafelnummer { get; set; }
 
-        public Reservatie(int reservatieID, Restaurant restaurantInfo, Gebruiker contactPersoon, string email, string telefoonnummer, int aantalPlaatsen, DateTime datum, int uur, int tafelnummer)
+        public ReservatieEF(int reservatieID, RestaurantEF restaurantInfo, GebruikerEF contactPersoon, int aantalPlaatsen, DateTime datum, int uur, int tafelnummer)
         {
-            ReservatieID = reservatieID;
+            ID = reservatieID;
             RestaurantInfo = restaurantInfo;
             ContactPersoon = contactPersoon;
             AantalPlaatsen = aantalPlaatsen;
@@ -32,7 +35,7 @@ namespace RestaurantBL.Model
             Tafelnummer = tafelnummer;
         }
 
-        public Reservatie(Restaurant restaurantInfo, Gebruiker contactPersoon, string email, string telefoonnummer, int aantalPlaatsen, DateTime datum, int uur, int tafelnummer)
+        public ReservatieEF(RestaurantEF restaurantInfo, GebruikerEF contactPersoon, int aantalPlaatsen, DateTime datum, int uur, int tafelnummer)
         {
             RestaurantInfo = restaurantInfo;
             ContactPersoon = contactPersoon;
@@ -40,6 +43,10 @@ namespace RestaurantBL.Model
             Datum = datum;
             Uur = uur;
             Tafelnummer = tafelnummer;
+        }
+
+        public ReservatieEF()
+        {
         }
     }
 }
