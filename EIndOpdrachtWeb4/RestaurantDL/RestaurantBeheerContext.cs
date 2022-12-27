@@ -17,6 +17,11 @@ namespace RestaurantDL
         public DbSet<ReservatieEF> Reservatie { get; set; }
         public DbSet<TafelEF> Tafel { get; set; }
 
+        public RestaurantBeheerContext(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(_connectionString);

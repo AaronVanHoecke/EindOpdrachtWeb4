@@ -19,22 +19,29 @@ namespace RestaurantDL.Mappers
             }
             catch (Exception e)
             {
-                throw new MapperException("Gebruiker kon niet gemapt worden", e);
+                throw new MapperException("MapToDomain", e);
             }
         }
 
         public static GebruikerEF MapToDB(Gebruiker domain, RestaurantBeheerContext ctx)
         {
-            GebruikerEF g = ctx.Gebruiker.Find(domain.Id);
-            if(g is not null)
+            try
             {
+                GebruikerEF g = ctx.Gebruiker.Find(domain.Id);
+                if (g is not null)
+                {
                     g.Naam = domain.Naam;
                     g.Email = domain.Email;
                     g.Telefoonnummer = domain.Telefoonnummer;
                     g.Locatie = MapLocatie.MapToDB(domain.Locatie, ctx);
                     return g;
+                }
+                return new GebruikerEF(domain.Naam, domain.Email, domain.Telefoonnummer, MapLocatie.MapToDB(domain.Locatie, ctx));
             }
-                    return new GebruikerEF(domain.Naam, domain.Email, domain.Telefoonnummer, MapLocatie.MapToDB(domain.Locatie, ctx));
+            catch (Exception ex)
+            {
+                throw new MapperException("MapToDB");
+            }
         }
     }
 }

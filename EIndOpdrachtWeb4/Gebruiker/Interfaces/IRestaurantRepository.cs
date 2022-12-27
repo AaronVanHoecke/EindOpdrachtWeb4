@@ -16,7 +16,6 @@ namespace RestaurantBL.Interfaces
         void VoegTafelToe(Restaurant res, Tafel tafel);
         void UpdateTafel(Restaurant res, Tafel tafel);
         void VerwijderTafel(Restaurant res, int tafelId);
-        List<Restaurant> GetRestaurants();
         List<Restaurant> GetRestaurants(Locatie location, string keuken);
         List<Tafel> GeefTafelsVanRestaurant(Restaurant restaurant);
         List<Tafel> GeefBeschikbareTafelsRestaurant(Restaurant restaurant);
