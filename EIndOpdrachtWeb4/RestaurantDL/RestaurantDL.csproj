@@ -18,8 +18,4 @@
     <ProjectReference Include="..\Gebruiker\RestaurantBL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-
 </Project>
