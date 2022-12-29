@@ -20,6 +20,8 @@ namespace RestaurantDL.Model
         [Required]
         public LocatieEF Locatie { get; set; }
 
+        public bool Verwijderd { get; set; }
+
         public GebruikerEF(int id, string naam, string email, string telefoonnummer, LocatieEF locatie)
         {
             Id = id;
@@ -27,6 +29,7 @@ namespace RestaurantDL.Model
             Email = email;
             Telefoonnummer = telefoonnummer;
             Locatie = locatie;
+            Verwijderd = false;
         }
         public GebruikerEF(string naam, string email, string telefoonnummer, LocatieEF locatie)
         {
@@ -34,6 +37,7 @@ namespace RestaurantDL.Model
             Email = email;
             Telefoonnummer = telefoonnummer;
             Locatie = locatie;
+            Verwijderd = false;
         }
 
         public GebruikerEF()

@@ -15,7 +15,7 @@ namespace RestaurantDL.Mappers
         {
             try
             {
-                return new Restaurant(db.ResaurantID, db.Naam, MapLocatie.MapToDomain(db.Locatie), db.Keuken, db.Telefoonnummer, db.Email, db.Reserveringen.Select(res => MapReservatie.MapToDomain(res)).ToList(), db.Tafels.Select(t => MapTafel.MapToDomain(t)).ToList());
+                return new Restaurant(db.RestaurantID, db.Naam, MapLocatie.MapToDomain(db.Locatie), db.Keuken, db.Telefoonnummer, db.Email, db.Reserveringen.Select(res => MapReservatie.MapToDomain(res)).ToList(), db.Tafels.Select(t => MapTafel.MapToDomain(t)).ToList());
             }
             catch (Exception e)
             {
@@ -28,16 +28,18 @@ namespace RestaurantDL.Mappers
             try
             {
                 RestaurantEF r = ctx.Restaurant.Find(domain.ID);
+                LocatieEF l = ctx.Locatie.Where(loc => loc.StraatNaam == domain.Locatie.StraatNaam && loc.Huisnummer == domain.Locatie.Huisnummer && loc.GemeenteNaam == domain.Locatie.GemeenteNaam && loc.Postcode == domain.Locatie.Postcode).FirstOrDefault();
+                if (l == null) l = MapLocatie.MapToDB(domain.Locatie, ctx);
                 if (r != null)
                 {
                     r.Naam = domain.Naam;
-                    r.Locatie = MapLocatie.MapToDB(domain.Locatie, ctx);
+                    r.Locatie = l;
                     r.Keuken = domain.Keuken;
                     r.Telefoonnummer = domain.Telefoonnummer;
                     r.Email = domain.Email;
                     return r;
                 }
-                return new RestaurantEF(domain.Naam, MapLocatie.MapToDB(domain.Locatie, ctx), domain.Keuken, domain.Telefoonnummer, domain.Email);
+                return new RestaurantEF(domain.Naam, MapLocatie.MapToDB(domain.Locatie, ctx), domain.Keuken, domain.Email, domain.Telefoonnummer);
             }
             catch (Exception e)
             {

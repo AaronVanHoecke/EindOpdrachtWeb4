@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestaurantDL;
 
@@ -11,9 +12,11 @@ using RestaurantDL;
 namespace RestaurantDL.Migrations
 {
     [DbContext(typeof(RestaurantBeheerContext))]
-    partial class RestaurantBeheerContextModelSnapshot : ModelSnapshot
+    [Migration("20221229135057_new")]
+    partial class @new
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,7 +103,7 @@ namespace RestaurantDL.Migrations
                     b.Property<DateTime>("Datum")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("RestaurantInfoRestaurantID")
+                    b.Property<int>("RestaurantInfoResaurantID")
                         .HasColumnType("int");
 
                     b.Property<int>("Tafelnummer")
@@ -116,18 +119,18 @@ namespace RestaurantDL.Migrations
 
                     b.HasIndex("ContactPersoonId");
 
-                    b.HasIndex("RestaurantInfoRestaurantID");
+                    b.HasIndex("RestaurantInfoResaurantID");
 
                     b.ToTable("Reservatie");
                 });
 
             modelBuilder.Entity("RestaurantDL.Model.RestaurantEF", b =>
                 {
-                    b.Property<int>("RestaurantID")
+                    b.Property<int>("ResaurantID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RestaurantID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResaurantID"));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -151,7 +154,7 @@ namespace RestaurantDL.Migrations
                     b.Property<bool>("Verwijderd")
                         .HasColumnType("bit");
 
-                    b.HasKey("RestaurantID");
+                    b.HasKey("ResaurantID");
 
                     b.HasIndex("LocatieId");
 
@@ -172,7 +175,7 @@ namespace RestaurantDL.Migrations
                     b.Property<bool>("Beschikbaar")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("RestaurantEFRestaurantID")
+                    b.Property<int?>("RestaurantEFResaurantID")
                         .HasColumnType("int");
 
                     b.Property<int>("RestaurantID")
@@ -183,7 +186,7 @@ namespace RestaurantDL.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("RestaurantEFRestaurantID");
+                    b.HasIndex("RestaurantEFResaurantID");
 
                     b.ToTable("Tafel");
                 });
@@ -209,7 +212,7 @@ namespace RestaurantDL.Migrations
 
                     b.HasOne("RestaurantDL.Model.RestaurantEF", "RestaurantInfo")
                         .WithMany("Reserveringen")
-                        .HasForeignKey("RestaurantInfoRestaurantID")
+                        .HasForeignKey("RestaurantInfoResaurantID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -233,7 +236,7 @@ namespace RestaurantDL.Migrations
                 {
                     b.HasOne("RestaurantDL.Model.RestaurantEF", null)
                         .WithMany("Tafels")
-                        .HasForeignKey("RestaurantEFRestaurantID")
+                        .HasForeignKey("RestaurantEFResaurantID")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 

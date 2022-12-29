@@ -2,6 +2,7 @@
 using RestaurantBL.Model;
 using RestaurantDL.Exceptions;
 using RestaurantDL.Mappers;
+using RestaurantDL.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,7 +67,9 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                ctx.Gebruiker.Remove(MapGebruiker.MapToDB(gebruiker, ctx));
+                GebruikerEF g = MapGebruiker.MapToDB(gebruiker, ctx);
+                g.Verwijderd = true;
+                ctx.Gebruiker.Update(g);
                 SaveAndClear();
             }
             catch (Exception ex)

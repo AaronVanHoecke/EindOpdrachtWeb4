@@ -28,6 +28,12 @@ namespace RestaurantBL.Model
             LocatieId = Id;
         }
 
+        public Locatie(int postcode, string gemeenteNaam, string straatNaam, string huisnummer) : this(postcode, gemeenteNaam)
+        {
+            StraatNaam = straatNaam;
+            Huisnummer = huisnummer;
+        }
+
         public void ZetPostcode(int postcode)
         {
             if (postcode < 1000 || postcode > 9999) throw new LocatieException("ZetPostcode - Postcode is niet correct");

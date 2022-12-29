@@ -2,6 +2,7 @@
 using RestaurantBL.Model;
 using RestaurantDL.Exceptions;
 using RestaurantDL.Mappers;
+using RestaurantDL.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,7 +71,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return ctx.Reservatie.Where(r => r.RestaurantInfo.ResaurantID == restaurant.ID).Select(r => MapReservatie.MapToDomain(r)).ToList();
+                return ctx.Reservatie.Where(r => r.RestaurantInfo.RestaurantID == restaurant.ID).Select(r => MapReservatie.MapToDomain(r)).ToList();
             }
             catch (Exception ex)
             {
@@ -82,7 +83,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return ctx.Reservatie.Any(r => r.ID == reservatie.ReservatieID && r.Datum == reservatie.Datum && r.AantalPlaatsen == reservatie.AantalPlaatsen && r.ContactPersoon.Id == reservatie.ContactPersoon.Id && r.RestaurantInfo.ResaurantID == reservatie.RestaurantInfo.ID);
+                return ctx.Reservatie.Any(r => r.ID == reservatie.ReservatieID && r.Datum == reservatie.Datum && r.AantalPlaatsen == reservatie.AantalPlaatsen && r.ContactPersoon.Id == reservatie.ContactPersoon.Id && r.RestaurantInfo.RestaurantID == reservatie.RestaurantInfo.ID);
             }
             catch (Exception ex)
             {
@@ -107,7 +108,9 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                ctx.Reservatie.Remove(MapReservatie.MapToDB(reservatie, ctx));
+                ReservatieEF res = MapReservatie.MapToDB(reservatie, ctx);
+                res.Verwijderd = true;
+                ctx.Reservatie.Update(res);
                 ctx.SaveChanges();
             }
             catch (Exception ex)

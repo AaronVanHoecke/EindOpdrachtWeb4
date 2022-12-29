@@ -27,15 +27,6 @@ namespace RestaurantDL.Mappers
         {
             try
             {
-                LocatieEF l = ctx.Locatie.Find(domain.LocatieId);
-                if (l != null)
-                {
-                    l.Postcode = domain.Postcode;
-                    l.GemeenteNaam = domain.GemeenteNaam;
-                    l.StraatNaam = domain.StraatNaam;
-                    l.Huisnummer = domain.Huisnummer;
-                    return l;
-                }
                 return new LocatieEF(domain.Postcode, domain.GemeenteNaam, domain.StraatNaam, domain.Huisnummer);
             }
             catch (Exception e)

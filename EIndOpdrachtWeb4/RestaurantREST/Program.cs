@@ -1,8 +1,14 @@
-var builder = WebApplication.CreateBuilder(args);
+using RestaurantBL.Interfaces;
+using RestaurantBL.Managers;
+using RestaurantDL.Repositories;
 
+var builder = WebApplication.CreateBuilder(args);
+string connectionString = @"Data Source=WINDOWS-ISGC24U\SQLEXPRESS;Initial Catalog=RestaurantOpdracht;Integrated Security=True;TrustServerCertificate=True";
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddSingleton<IRestaurantRepository>(r => new RestaurantRepository(connectionString));
+builder.Services.AddSingleton<RestaurantManager>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -40,9 +40,19 @@ namespace RestaurantBL.Model
             Tafels = tafels;
         }
 
+        public Restaurant(int iD, string naam, Locatie locatie, string keuken, string telefoonnummer, string email)
+        {
+            ID = iD;
+            Naam = naam;
+            Locatie = locatie;
+            Keuken = keuken;
+            Telefoonnummer = telefoonnummer;
+            Email = email;
+        }
+
         public void ZetNaam(string naam)
         {
-            if (!string.IsNullOrWhiteSpace(naam)) throw new RestaurantException("Naam mag niet leeg zijn");
+            if (string.IsNullOrWhiteSpace(naam)) throw new RestaurantException("Naam mag niet leeg zijn");
             Naam = naam;
         }
         public void ZetEmail(string email)
@@ -58,6 +68,12 @@ namespace RestaurantBL.Model
             if (string.IsNullOrWhiteSpace(telefoonnummer)) throw new GebruikerException("ZetTelefoonnummer - Telefoonnummer mag niet leeg zijn");
             if (!TelefoonChecker.CheckTelefoon(telefoonnummer)) throw new GebruikerException("ZetTelefoonnummer - Telefoonnummer is niet geldig");
             Telefoonnummer = telefoonnummer;
+        }
+
+        public void ZetId(int id)
+        {
+            if (id < 0) throw new RestaurantException("ZetId - Id mag niet kleiner zijn dan 0");
+            ID = id;
         }
     }
 }

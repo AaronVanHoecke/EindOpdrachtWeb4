@@ -24,6 +24,8 @@ namespace RestaurantDL.Model
         [Required]
         public int Tafelnummer { get; set; }
 
+        public bool Verwijderd { get; set; }
+
         public ReservatieEF(int reservatieID, RestaurantEF restaurantInfo, GebruikerEF contactPersoon, int aantalPlaatsen, DateTime datum, int uur, int tafelnummer)
         {
             ID = reservatieID;
@@ -33,6 +35,7 @@ namespace RestaurantDL.Model
             Datum = datum;
             Uur = uur;
             Tafelnummer = tafelnummer;
+            Verwijderd = false;
         }
 
         public ReservatieEF(RestaurantEF restaurantInfo, GebruikerEF contactPersoon, int aantalPlaatsen, DateTime datum, int uur, int tafelnummer)
@@ -43,6 +46,7 @@ namespace RestaurantDL.Model
             Datum = datum;
             Uur = uur;
             Tafelnummer = tafelnummer;
+            Verwijderd = false;
         }
 
         public ReservatieEF()

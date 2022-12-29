@@ -36,7 +36,7 @@ namespace RestaurantBL.Managers
             try
             {
                 if (restaurant == null) throw new RestaurantManagerException("UpdateRestaurant - Restaurant mag niet null zijn");
-                if (!restaurantRepo.BestaatRestaurant(restaurant)) throw new RestaurantManagerException("UpdateRestaurant - Restaurant bestaat niet");
+                if (!restaurantRepo.BestaatRestaurant(restaurant.ID)) throw new RestaurantManagerException("UpdateRestaurant - Restaurant bestaat niet");
                 if (restaurantRepo.IsDezelfde(restaurant)) throw new RestaurantManagerException("UpdateRestaurant - Restaurant is dezelfde");
                 restaurantRepo.UpdateRestaurant(restaurant);
             }
@@ -46,13 +46,13 @@ namespace RestaurantBL.Managers
             }
         }
 
-        public void VerwijderRestaurant(Restaurant restaurant)
+        public void VerwijderRestaurant(int restaurantId)
         {
             try
             {
-                if (restaurant == null) throw new RestaurantManagerException("VerwijderRestaurant - Restaurant mag niet null zijn");
-                if (!restaurantRepo.BestaatRestaurant(restaurant)) throw new RestaurantManagerException("VerwijderRestaurant - Restaurant bestaat niet");
-                restaurantRepo.VerwijderRestaurant(restaurant);
+                if (restaurantId == null) throw new RestaurantManagerException("VerwijderRestaurant - RestaurantId mag niet null zijn");
+                if (!restaurantRepo.BestaatRestaurant(restaurantId)) throw new RestaurantManagerException("VerwijderRestaurant - Restaurant bestaat niet");
+                restaurantRepo.VerwijderRestaurant(restaurantId);
             }
             catch (Exception ex)
             {
@@ -103,6 +103,19 @@ namespace RestaurantBL.Managers
             catch (Exception ex)
             {
                 throw new RestaurantManagerException("VerwijderTafel - Er is een fout opgetreden", ex);
+            }
+        }
+
+        public bool BestaatRestaurant(int id)
+        {
+            try
+            {
+                if (id == null) throw new RestaurantManagerException("BestaatRestaurant - ID mag niet null zijn");
+                return restaurantRepo.BestaatRestaurant(id);
+            }
+            catch (Exception ex)
+            {
+                throw new RestaurantManagerException("BestaatRestaurant - Er is een fout opgetreden", ex);
             }
         }
     }

@@ -11,7 +11,7 @@ namespace RestaurantBL.Interfaces
     {
         void VoegRestaurantToe(Restaurant restaurant);
         void UpdateRestaurant(Restaurant restaurant);
-        void VerwijderRestaurant(Restaurant restaurant);
+        void VerwijderRestaurant(int restaurantId);
         List<Restaurant> GeefRestaurants();
         void VoegTafelToe(Restaurant res, Tafel tafel);
         void UpdateTafel(Restaurant res, Tafel tafel);
@@ -24,7 +24,7 @@ namespace RestaurantBL.Interfaces
         bool IsDezelfde(Restaurant restaurant);
         bool BestaatTafel(Tafel tafel);
         bool IsDezelfde(Tafel tafel);
-
-        
+        bool BestaatRestaurant(int id);
+        Restaurant GeefRestaurant(int id);
     }
 }
