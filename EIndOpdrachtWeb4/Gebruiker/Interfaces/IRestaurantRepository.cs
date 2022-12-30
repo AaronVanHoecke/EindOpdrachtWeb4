@@ -9,13 +9,13 @@ namespace RestaurantBL.Interfaces
 {
     public interface IRestaurantRepository
     {
-        void VoegRestaurantToe(Restaurant restaurant);
-        void UpdateRestaurant(Restaurant restaurant);
+        Restaurant VoegRestaurantToe(Restaurant restaurant);
+        Restaurant UpdateRestaurant(Restaurant restaurant);
         void VerwijderRestaurant(int restaurantId);
         List<Restaurant> GeefRestaurants();
-        void VoegTafelToe(Restaurant res, Tafel tafel);
-        void UpdateTafel(Restaurant res, Tafel tafel);
-        void VerwijderTafel(Restaurant res, int tafelId);
+        Tafel VoegTafelToe(Tafel tafel);
+        Tafel UpdateTafel(int restaurantId, Tafel tafel);
+        void VerwijderTafel(int restaurantId, int tafelId);
         List<Restaurant> GetRestaurants(Locatie location, string keuken);
         List<Tafel> GeefTafelsVanRestaurant(Restaurant restaurant);
         List<Tafel> GeefBeschikbareTafelsRestaurant(Restaurant restaurant);
@@ -26,5 +26,11 @@ namespace RestaurantBL.Interfaces
         bool IsDezelfde(Tafel tafel);
         bool BestaatRestaurant(int id);
         Restaurant GeefRestaurant(int id);
+        List<Reservatie> GeefReservatiesOpDatum(int id, DateTime datum);
+        Tafel GeefTafel(int tafelId, int restaurantId);
+        List<Restaurant> GeefRestaurant(int value, string keuken);
+        List<Restaurant> GeefRestaurant(string keuken);
+        List<Restaurant> GeefRestaurantPostcode(int postcode);
+        List<Restaurant> GeefRestaurantsOpDatum(DateTime datum, int aantalPlaatsen);
     }
 }

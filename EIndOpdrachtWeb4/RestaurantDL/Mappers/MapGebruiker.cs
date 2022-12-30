@@ -28,12 +28,14 @@ namespace RestaurantDL.Mappers
             try
             {
                 GebruikerEF g = ctx.Gebruiker.Find(domain.Id);
+                LocatieEF l = ctx.Locatie.Where(loc => loc.StraatNaam == domain.Locatie.StraatNaam && loc.Huisnummer == domain.Locatie.Huisnummer && loc.GemeenteNaam == domain.Locatie.GemeenteNaam && loc.Postcode == domain.Locatie.Postcode).FirstOrDefault();
+                if (l == null) l = MapLocatie.MapToDB(domain.Locatie, ctx);
                 if (g is not null)
                 {
                     g.Naam = domain.Naam;
                     g.Email = domain.Email;
                     g.Telefoonnummer = domain.Telefoonnummer;
-                    g.Locatie = MapLocatie.MapToDB(domain.Locatie, ctx);
+                    g.Locatie = l;
                     return g;
                 }
                 return new GebruikerEF(domain.Naam, domain.Email, domain.Telefoonnummer, MapLocatie.MapToDB(domain.Locatie, ctx));

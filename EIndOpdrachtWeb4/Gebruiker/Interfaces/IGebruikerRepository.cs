@@ -9,10 +9,11 @@ namespace RestaurantBL.Interfaces
 {
     public interface IGebruikerRepository
     {
-        int VoegGebruikerToe(Gebruiker gebruiker);
-        void UpdateGebruiker(Gebruiker gebruiker);
-        void VerwijderGebruiker(Gebruiker gebruiker);
-        bool BestaatGebruiker(Gebruiker gebruiker);
+        Gebruiker VoegGebruikerToe(Gebruiker gebruiker);
+        Gebruiker UpdateGebruiker(Gebruiker gebruiker);
+        void VerwijderGebruiker(int gebruikerId);
+        bool BestaatGebruiker(int gebruikerId);
         bool IsDezelfde(Gebruiker gebruiker);
+        Gebruiker GeefGebruiker(int gebruikerId);
     }
 }

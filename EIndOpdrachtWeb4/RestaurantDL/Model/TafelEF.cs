@@ -17,6 +17,7 @@ namespace RestaurantDL.Model
         public bool Beschikbaar { get; set; }
         [Required]
         public int RestaurantID { get; set; }
+        public RestaurantEF Restaurant { get; set; }
         public bool Verwijderd { get; set; }
 
         public TafelEF(int iD, int aantalStoelen, bool beschikbaar, int restaurantID)

@@ -1,9 +1,8 @@
 ﻿using RestaurantBL.Model;
 using RestaurantDL.Exceptions;
-using RestaurantDL.Model;
-using RestaurantRESTbeheerder.Model.Input;
+using RestaurantRESTgebruiker.Model.Input;
 
-namespace RestaurantRESTbeheerder.Mappers
+namespace RestaurantRESTgebruiker.Mappers
 {
     public static  class MapRestaurantToDomain
     {

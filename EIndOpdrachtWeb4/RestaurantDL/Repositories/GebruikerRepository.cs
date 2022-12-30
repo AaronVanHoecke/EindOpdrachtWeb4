@@ -1,4 +1,5 @@
-﻿using RestaurantBL.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using RestaurantBL.Interfaces;
 using RestaurantBL.Model;
 using RestaurantDL.Exceptions;
 using RestaurantDL.Mappers;
@@ -25,11 +26,11 @@ namespace RestaurantDL.Repositories
             ctx.SaveChanges();
             ctx.ChangeTracker.Clear();
         }
-        public bool BestaatGebruiker(Gebruiker gebruiker)
+        public bool BestaatGebruiker(int gebruikerId)
         {
             try
             {
-                return ctx.Gebruiker.Any(g => g.Id == gebruiker.Id);
+                return ctx.Gebruiker.Any(g => g.Id == gebruikerId);
             }
             catch (Exception ex)
             {
@@ -42,7 +43,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return ctx.Gebruiker.Any(g => g.Id == gebruiker.Id && g.Naam == gebruiker.Naam && g.Email == gebruiker.Email && g.Telefoonnummer == gebruiker.Telefoonnummer);
+                return ctx.Gebruiker.Any(g => g.Naam == gebruiker.Naam && g.Email == gebruiker.Email && g.Telefoonnummer == gebruiker.Telefoonnummer && g.Locatie == MapLocatie.MapToDB(gebruiker.Locatie, ctx));
             }
             catch (Exception ex)
             {
@@ -50,12 +51,13 @@ namespace RestaurantDL.Repositories
             }
         }
 
-        public void UpdateGebruiker(Gebruiker gebruiker)
+        public Gebruiker UpdateGebruiker(Gebruiker gebruiker)
         {
             try
             {
                 ctx.Gebruiker.Update(MapGebruiker.MapToDB(gebruiker, ctx));
                 SaveAndClear();
+                return MapGebruiker.MapToDomain(ctx.Gebruiker.Include(g => g.Locatie).OrderBy(g => g.Id).Last());
             }
             catch (Exception ex)
             {
@@ -63,11 +65,11 @@ namespace RestaurantDL.Repositories
             }
         }
 
-        public void VerwijderGebruiker(Gebruiker gebruiker)
+        public void VerwijderGebruiker(int gebruikerId)
         {
             try
             {
-                GebruikerEF g = MapGebruiker.MapToDB(gebruiker, ctx);
+                GebruikerEF g = ctx.Gebruiker.Find(gebruikerId);
                 g.Verwijderd = true;
                 ctx.Gebruiker.Update(g);
                 SaveAndClear();
@@ -78,17 +80,29 @@ namespace RestaurantDL.Repositories
             }
         }
 
-        public int VoegGebruikerToe(Gebruiker gebruiker)
+        public Gebruiker VoegGebruikerToe(Gebruiker gebruiker)
         {
             try
             {
                 ctx.Gebruiker.Add(MapGebruiker.MapToDB(gebruiker, ctx));
                 SaveAndClear();
-                return ctx.Gebruiker.Last().Id;
+                return MapGebruiker.MapToDomain(ctx.Gebruiker.Include(g => g.Locatie).OrderBy(g => g.Id).Last());
             }
             catch (Exception ex)
             {
                 throw new RepositoryException("VoegGebruikerToe - Er is een fout opgetreden", ex);
+            }
+        }
+
+        public Gebruiker GeefGebruiker(int gebruikerId)
+        {
+            try
+            {
+                return MapGebruiker.MapToDomain(ctx.Gebruiker.Find(gebruikerId));
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("GeefGebruiker - Er is een fout opgetreden", ex);
             }
         }
     }

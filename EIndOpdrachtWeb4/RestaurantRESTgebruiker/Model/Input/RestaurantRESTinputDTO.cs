@@ -1,4 +1,4 @@
-﻿namespace RestaurantRESTbeheerder.Model.Input
+﻿namespace RestaurantRESTgebruiker.Model.Input
 {
     public class RestaurantRESTinputDTO
     {

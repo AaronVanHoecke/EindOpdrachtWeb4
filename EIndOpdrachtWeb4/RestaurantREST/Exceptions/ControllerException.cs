@@ -1,4 +1,4 @@
-﻿namespace RestaurantREST.Exceptions
+﻿namespace RestaurantRESTbeheerder.Exceptions
 {
     public class ControllerException : Exception
     {

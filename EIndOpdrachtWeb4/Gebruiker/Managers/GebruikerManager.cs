@@ -17,12 +17,12 @@ namespace RestaurantBL.Managers
             this.gebruikerRepo = gebruikerRepo;
         }
 
-        public int VoegGebruikerToe(Gebruiker gebruiker)
+        public Gebruiker VoegGebruikerToe(Gebruiker gebruiker)
         {
             try
             {
                 if (gebruiker == null) throw new GebruikerManagerException("VoegGebruikeToe - Gebruiker mag niet null zijn");
-                if (gebruikerRepo.BestaatGebruiker(gebruiker)) throw new GebruikerManagerException("VoegGebruikerToe - Gebruiker bestaat al");
+                if (gebruikerRepo.BestaatGebruiker(gebruiker.Id)) throw new GebruikerManagerException("VoegGebruikerToe - Gebruiker bestaat al");
                 return gebruikerRepo.VoegGebruikerToe(gebruiker);
             }
             catch (Exception ex)
@@ -31,14 +31,14 @@ namespace RestaurantBL.Managers
             }
         }
 
-        public void UpdateGebruiker(Gebruiker gebruiker)
+        public Gebruiker UpdateGebruiker(Gebruiker gebruiker)
         {
             try
             {
                 if (gebruiker == null) throw new GebruikerManagerException("UpdateGebruiker - Gebruiker mag niet null zijn");
-                if (!gebruikerRepo.BestaatGebruiker(gebruiker)) throw new GebruikerManagerException("UpdateGebruiker - Gebruiker bestaat niet");
+                if (!gebruikerRepo.BestaatGebruiker(gebruiker.Id)) throw new GebruikerManagerException("UpdateGebruiker - Gebruiker bestaat niet");
                 if (gebruikerRepo.IsDezelfde(gebruiker)) throw new GebruikerManagerException("UpdateGebruiker - Gebruiker is dezelfde");
-                gebruikerRepo.UpdateGebruiker(gebruiker);
+                return gebruikerRepo.UpdateGebruiker(gebruiker);
             }
             catch (Exception ex)
             {
@@ -46,17 +46,43 @@ namespace RestaurantBL.Managers
             }
         }
 
-        public void VerwijderGebruiker(Gebruiker gebruiker)
+        public void VerwijderGebruiker(int gebruikerId)
         {
             try
             {
-                if (gebruiker == null) throw new GebruikerManagerException("VerwijderGebruiker - Gebruiker mag niet null zijn");
-                if (!gebruikerRepo.BestaatGebruiker(gebruiker)) throw new GebruikerManagerException("VerwijderGebruiker - Gebruiker bestaat niet");
-                gebruikerRepo.VerwijderGebruiker(gebruiker);
+                if (gebruikerId == null) throw new GebruikerManagerException("VerwijderGebruiker - Gebruiker mag niet null zijn");
+                if (!gebruikerRepo.BestaatGebruiker(gebruikerId)) throw new GebruikerManagerException("VerwijderGebruiker - Gebruiker bestaat niet");
+                gebruikerRepo.VerwijderGebruiker(gebruikerId);
             }
             catch (Exception ex)
             {
                 throw new GebruikerManagerException("VerwijderGebruiker - Er is een fout opgetreden", ex);
+            }
+        }
+
+        public Gebruiker GeefGebruiker(int gebruikerId)
+        {
+            try
+            {
+                if (gebruikerId < 0) throw new GebruikerManagerException("GeefGebruiker - GebruikerId mag niet kleiner dan 0 zijn");
+                return gebruikerRepo.GeefGebruiker(gebruikerId);
+            }
+            catch (Exception ex)
+            {
+                throw new GebruikerManagerException("GeefGebruiker - Er is een fout opgetreden", ex);
+            }
+        }
+
+        public bool BestaatGebruiker(int id)
+        {
+            try
+            {
+                if (id < 0) throw new GebruikerManagerException("BestaatGebruiker - Id mag niet kleiner dan 0 zijn");
+                return gebruikerRepo.BestaatGebruiker(id);
+            }
+            catch (Exception ex)
+            {
+                throw new GebruikerManagerException("BestaatGebruiker - Er is een fout opgetreden", ex);
             }
         }
     }
