@@ -11,7 +11,7 @@ namespace RestaurantRESTbeheerder.Mappers
         {
             try
             {
-                return new TafelRESToutputDTO(t.ID, t.RestaurantID, t.AantalStoelen, t.Beschikbaar);
+                return new TafelRESToutputDTO(t.ID, t.RestaurantID, t.AantalStoelen, t.Tafelnummer);
             }
             catch (Exception e)
             {

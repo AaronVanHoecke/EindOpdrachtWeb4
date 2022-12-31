@@ -16,7 +16,6 @@ namespace RestaurantBL.Model
         public string Keuken { get; set; }
         public string Telefoonnummer { get; set; }
         public string Email { get; set; }
-        public List<Reservatie> Reserveringen { get; private set; }
         public List<Tafel> Tafels { get; private set; }
 
         public Restaurant(string naam, Locatie locatie, string keuken, string telefoonnummer, string email)
@@ -28,7 +27,7 @@ namespace RestaurantBL.Model
             ZetEmail(email);
         }
 
-        public Restaurant(int iD, string naam, Locatie locatie, string keuken, string telefoonnummer, string email, List<Reservatie> reserveringen, List<Tafel> tafels)
+        public Restaurant(int iD, string naam, Locatie locatie, string keuken, string telefoonnummer, string email, List<Tafel> tafels)
         {
             ID = iD;
             Naam = naam;
@@ -36,7 +35,6 @@ namespace RestaurantBL.Model
             Keuken = keuken;
             Telefoonnummer = telefoonnummer;
             Email = email;
-            Reserveringen = reserveringen;
             Tafels = tafels;
         }
 
@@ -75,5 +73,12 @@ namespace RestaurantBL.Model
             if (id < 0) throw new RestaurantException("ZetId - Id mag niet kleiner zijn dan 0");
             ID = id;
         }
+        
+        //public void VoegTafelToe(Tafel tafel)
+        //{
+        //    if (tafel == null) throw new RestaurantException("VoegTafelToe - Tafel mag niet leeg zijn");
+        //    if (Tafels.Select(t => t.Tafelnummer).Contains(tafel.Tafelnummer)) throw new RestaurantException("VoegTafelToe - Tafelnummer bestaat al");
+        //    Tafels.Add(tafel);
+        //}
     }
 }

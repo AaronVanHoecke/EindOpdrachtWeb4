@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RestaurantBL.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,31 +16,33 @@ namespace RestaurantBL.Model
 
         public int AantalPlaatsen { get; set; }
 
-        public DateTime Datum { get; set; }
-
-        public int Uur { get; set; }
+        public DateTime ReservatieDetail { get; set; }
 
         public int Tafelnummer { get; set; }
 
-        public Reservatie(int reservatieID, Restaurant restaurantInfo, Gebruiker contactPersoon, string email, string telefoonnummer, int aantalPlaatsen, DateTime datum, int uur, int tafelnummer)
+        public Reservatie(int reservatieID, Restaurant restaurantInfo, Gebruiker contactPersoon, int aantalPlaatsen, DateTime reservatiedetail, int tafelnummer)
         {
             ReservatieID = reservatieID;
             RestaurantInfo = restaurantInfo;
             ContactPersoon = contactPersoon;
             AantalPlaatsen = aantalPlaatsen;
-            Datum = datum;
-            Uur = uur;
+            ReservatieDetail = reservatiedetail;
             Tafelnummer = tafelnummer;
         }
 
-        public Reservatie(Restaurant restaurantInfo, Gebruiker contactPersoon, string email, string telefoonnummer, int aantalPlaatsen, DateTime datum, int uur, int tafelnummer)
+        public Reservatie(Restaurant restaurantInfo, Gebruiker contactPersoon, int aantalPlaatsen, DateTime reservatiedetail, int tafelnummer)
         {
             RestaurantInfo = restaurantInfo;
             ContactPersoon = contactPersoon;
             AantalPlaatsen = aantalPlaatsen;
-            Datum = datum;
-            Uur = uur;
+            ReservatieDetail = reservatiedetail;
             Tafelnummer = tafelnummer;
+        }
+
+        public void ZetId(int id)
+        {
+            if (id <= 0) throw new ReservatieException("Id moet groter zijn dan 0");
+            ReservatieID = id;
         }
     }
 }

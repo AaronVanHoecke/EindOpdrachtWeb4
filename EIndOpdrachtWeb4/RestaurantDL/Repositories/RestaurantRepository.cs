@@ -19,7 +19,7 @@ namespace RestaurantDL.Repositories
 
         public RestaurantRepository(string connectionString)
         {
-            this.ctx = new RestaurantBeheerContext(connectionString);
+           this.ctx = new RestaurantBeheerContext(connectionString);
         }
 
         public bool BestaatRestaurant(Restaurant restaurant)
@@ -50,7 +50,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return ctx.Tafel.Any(t => t.ID == tafel.ID && t.RestaurantID == tafel.RestaurantID);
+                return ctx.Tafel.Any(t => t.TafelNummer == tafel.Tafelnummer && t.RestaurantID == tafel.RestaurantID);
             }
             catch (Exception ex)
             {
@@ -58,11 +58,28 @@ namespace RestaurantDL.Repositories
             }
         }
 
+        public Tafel GeefBeschikbareTafel(int restaurantId, DateTime datum, int aantalPlaatsen)
+        {
+            try
+            {
+                return ctx.Tafel.Where(t => t.RestaurantID == restaurantId && t.AantalStoelen >= aantalPlaatsen)
+                    .OrderBy(t => t.AantalStoelen)
+                    .ThenBy(t => t.ID)
+                    .Where(t => !ctx.Reservatie.Any(r => r.Tafelnummer == t.TafelNummer && r.ReservatieDetail < datum.AddMinutes(90) && r.ReservatieDetail > datum.AddMinutes(-90)))
+                    .Select(t => MapTafel.MapToDomain(t))
+                    .FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("GeefBeschikbareTafel - Er is een fout opgetreden", ex);
+            }
+        }
+        
         public List<Tafel> GeefBeschikbareTafels(DateTime datum, Locatie locatie, string keuken)
         {
             try
             {
-                return ctx.Tafel.Where(t => t.Beschikbaar == true && ctx.Restaurant.Any(r => r.Locatie == MapLocatie.MapToDB(locatie, ctx) && r.Keuken == keuken) && ctx.Reservatie.Any(r => r.Datum != datum)).Select(t => MapTafel.MapToDomain(t)).ToList();
+                return ctx.Tafel.Where(t =>ctx.Restaurant.Any(r => r.Locatie == MapLocatie.MapToDB(locatie, ctx) && r.Keuken == keuken) && ctx.Reservatie.Any(r => r.ReservatieDetail != datum)).Select(t => MapTafel.MapToDomain(t)).ToList();
             }
             catch (Exception ex)
             {
@@ -74,7 +91,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return ctx.Tafel.Where(t => t.Beschikbaar == true && t.RestaurantID == restaurant.ID).Select(t => MapTafel.MapToDomain(t)).ToList();
+                return ctx.Tafel.Where(t =>t.RestaurantID == restaurant.ID).Select(t => MapTafel.MapToDomain(t)).ToList();
             }
             catch (Exception ex)
             {
@@ -86,7 +103,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return ctx.Reservatie.Where(r => r.RestaurantInfo.RestaurantID == id && r.Datum == datum).Select(r => MapReservatie.MapToDomain(r)).ToList();
+                return ctx.Reservatie.Where(r => r.RestaurantInfo.RestaurantID == id && r.ReservatieDetail == datum).Select(r => MapReservatie.MapToDomain(r)).ToList();
             }
             catch (Exception ex)
             {
@@ -98,7 +115,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return MapRestaurant.MapToDomain(ctx.Restaurant.Include(r => r.Locatie).Include(r => r.Tafels).Include(r => r.Reserveringen).FirstOrDefault(r => r.RestaurantID == id && r.Verwijderd == false));
+                return MapRestaurant.MapToDomain(ctx.Restaurant.Include(r => r.Locatie).Include(r => r.Tafels).Where(r => r.RestaurantID == id && r.Verwijderd == false).FirstOrDefault());
             }
             catch (Exception ex)
             {
@@ -110,7 +127,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return ctx.Restaurant.Include(r => r.Locatie).Include(r => r.Tafels).Include(r => r.Reserveringen).Where(r => r.Locatie.Postcode == value && r.Keuken == keuken && r.Verwijderd == false).Select(r => MapRestaurant.MapToDomain(r)).ToList();
+                return ctx.Restaurant.Include(r => r.Locatie).Include(r => r.Tafels).Where(r => r.Locatie.Postcode == value && r.Keuken == keuken && r.Verwijderd == false).Select(r => MapRestaurant.MapToDomain(r)).ToList();
             }
             catch (Exception ex)
             {
@@ -122,7 +139,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return ctx.Restaurant.Include(r => r.Locatie).Include(r => r.Tafels).Include(r => r.Reserveringen).Where(r => r.Keuken == keuken && r.Verwijderd == false).Select(r => MapRestaurant.MapToDomain(r)).ToList();
+                return ctx.Restaurant.Include(r => r.Locatie).Include(r => r.Tafels).Where(r => r.Keuken == keuken && r.Verwijderd == false).Select(r => MapRestaurant.MapToDomain(r)).ToList();
             }
             catch (Exception ex)
             {
@@ -134,7 +151,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return ctx.Restaurant.Include(r => r.Locatie).Include(r => r.Tafels).Include(r => r.Reserveringen).Where(r => r.Locatie.Postcode == postcode && r.Verwijderd == false).Select(r => MapRestaurant.MapToDomain(r)).ToList();
+                return ctx.Restaurant.Include(r => r.Locatie).Include(r => r.Tafels).Where(r => r.Locatie.Postcode == postcode && r.Verwijderd == false).Select(r => MapRestaurant.MapToDomain(r)).ToList();
             }
             catch (Exception ex)
             {
@@ -158,7 +175,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return ctx.Restaurant.Include(r => r.Locatie).Include(r => r.Tafels).Include(r => r.Reserveringen.Where(res => res.Datum == datum)).Include(r => r.Tafels.Any(t => t.AantalStoelen >= aantalPlaatsen && t.Beschikbaar == true)).Select(r => MapRestaurant.MapToDomain(r)).ToList(); //TODO FIX
+                return ctx.Restaurant.Include(r => r.Locatie).Include(r => r.Tafels).Where(r => r.Verwijderd == false && r.Tafels.Any(t => t.AantalStoelen >= aantalPlaatsen && !ctx.Reservatie.Any(re => re.Tafelnummer == t.TafelNummer && re.ReservatieDetail == datum))).Select(r => MapRestaurant.MapToDomain(r)).ToList();
             }
             catch (Exception ex)
             {
@@ -170,7 +187,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return MapTafel.MapToDomain(ctx.Tafel.FirstOrDefault(tafel => tafel.ID == tafelId && tafel.RestaurantID == restaurantId));
+                return MapTafel.MapToDomain(ctx.Tafel.FirstOrDefault(tafel => tafel.TafelNummer == tafelId && tafel.RestaurantID == restaurantId));
             }
             catch (Exception ex)
             {
@@ -218,7 +235,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return ctx.Tafel.Where(t => t.ID == tafel.ID && t.RestaurantID == tafel.RestaurantID).Any(t => t.AantalStoelen == tafel.AantalStoelen && t.Beschikbaar == tafel.Beschikbaar);
+                return ctx.Tafel.Where(t => t.ID == tafel.ID && t.RestaurantID == tafel.RestaurantID).Any(t => t.AantalStoelen == tafel.AantalStoelen);
             }
             catch (Exception ex)
             {
@@ -232,7 +249,7 @@ namespace RestaurantDL.Repositories
             {
                 ctx.Restaurant.Update(MapRestaurant.MapToDB(restaurant, ctx));
                 ctx.SaveChanges();
-                return MapRestaurant.MapToDomain(ctx.Restaurant.Include(r => r.Reserveringen).Include(r => r.Tafels).Where(r => r.RestaurantID == restaurant.ID).FirstOrDefault());
+                return MapRestaurant.MapToDomain(ctx.Restaurant.Include(r => r.Tafels).Where(r => r.RestaurantID == restaurant.ID).FirstOrDefault());
             }
             catch (Exception ex)
             {

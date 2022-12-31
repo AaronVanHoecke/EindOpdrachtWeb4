@@ -19,11 +19,8 @@ namespace RestaurantDL.Mappers
                     reservatie.ID,
                     MapRestaurant.MapToDomain(reservatie.RestaurantInfo),
                     MapGebruiker.MapToDomain(reservatie.ContactPersoon),
-                    reservatie.ContactPersoon.Email,
-                    reservatie.ContactPersoon.Telefoonnummer,
                     reservatie.AantalPlaatsen,
-                    reservatie.Datum,
-                    reservatie.Uur,
+                    reservatie.ReservatieDetail,
                     reservatie.Tafelnummer);
             }
             catch (Exception ex)
@@ -40,14 +37,13 @@ namespace RestaurantDL.Mappers
                 if (r is not null)
                 {
                     r.AantalPlaatsen = res.AantalPlaatsen;
-                    r.Datum = res.Datum;
-                    r.Uur = res.Uur;
+                    r.ReservatieDetail = res.ReservatieDetail;
                     r.ContactPersoon = MapGebruiker.MapToDB(res.ContactPersoon, ctx);
                     r.RestaurantInfo = MapRestaurant.MapToDB(res.RestaurantInfo, ctx);
                     r.Tafelnummer = res.Tafelnummer;
                     return r;
                 }
-                return new ReservatieEF(MapRestaurant.MapToDB(res.RestaurantInfo, ctx), MapGebruiker.MapToDB(res.ContactPersoon, ctx), res.AantalPlaatsen, res.Datum, res.Uur, res.Tafelnummer);
+                return new ReservatieEF(MapRestaurant.MapToDB(res.RestaurantInfo, ctx), MapGebruiker.MapToDB(res.ContactPersoon, ctx), res.AantalPlaatsen, res.ReservatieDetail, res.Tafelnummer);
             }
             catch (Exception ex)
             {

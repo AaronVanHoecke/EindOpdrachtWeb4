@@ -98,11 +98,23 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return MapGebruiker.MapToDomain(ctx.Gebruiker.Find(gebruikerId));
+                return MapGebruiker.MapToDomain(ctx.Gebruiker.Include(g => g.Locatie).Where(g => g.Id == gebruikerId).First());
             }
             catch (Exception ex)
             {
                 throw new RepositoryException("GeefGebruiker - Er is een fout opgetreden", ex);
+            }
+        }
+
+        public bool GebruikerHeeftReservaties(int gebruikerId)
+        {
+            try
+            {
+                return ctx.Reservatie.Any(r => r.ContactPersoon.Id == gebruikerId);
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("GebruikerHeeftReservaties - Er is een fout opgetreden", ex);
             }
         }
     }

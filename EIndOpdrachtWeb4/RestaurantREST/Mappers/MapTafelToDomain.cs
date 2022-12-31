@@ -6,11 +6,11 @@ namespace RestaurantRESTbeheerder.Mappers
 {
     public static class MapTafelToDomain
     {
-        public static Tafel MapToDomain(TafelRESTinputDTO tafel, int id)
+        public static Tafel MapToDomain(TafelRESTinputDTO tafel, int restaurantId)
         {
             try
             {
-                return new Tafel(tafel.AantalPlaatsen, id, tafel.Beschikbaar);
+                return new Tafel(tafel.AantalPlaatsen,tafel.TafelNummer ,restaurantId);
             }
             catch (Exception e)
             {

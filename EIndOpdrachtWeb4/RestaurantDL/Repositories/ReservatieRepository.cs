@@ -1,4 +1,5 @@
-﻿using RestaurantBL.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using RestaurantBL.Interfaces;
 using RestaurantBL.Model;
 using RestaurantDL.Exceptions;
 using RestaurantDL.Mappers;
@@ -23,11 +24,35 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return ctx.Reservatie.Any(r => r.ID == reservatie.ReservatieID);
+                return ctx.Reservatie.Any(r => r.ReservatieDetail == reservatie.ReservatieDetail && r.Tafelnummer == reservatie.Tafelnummer && r.RestaurantInfo.RestaurantID == reservatie.RestaurantInfo.ID);
             }
             catch (Exception ex)
             {
                 throw new RepositoryException("BestaatReservatie - Er is een fout opgetreden", ex);
+            }
+        }
+
+        public bool BestaatReservatie(int reservatieId)
+        {
+            try
+            {
+                return ctx.Reservatie.Any(r => r.ID == reservatieId);
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("BestaatReservatie - Er is een fout opgetreden", ex);
+            }
+        }
+
+        public Reservatie GeefReservatie(int id)
+        {
+            try
+            {
+                return MapReservatie.MapToDomain(ctx.Reservatie.Find(id));
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("GeefReservatie - Er is een fout opgetreden", ex);
             }
         }
 
@@ -47,7 +72,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return ctx.Reservatie.Where(r => r.Datum >= begindatum && r.Datum <= einddatum).Select(r => MapReservatie.MapToDomain(r)).ToList();
+                return ctx.Reservatie.Include(r => r.RestaurantInfo).Include(r => r.ReservatieDetail).Where(r => r.ReservatieDetail.Date >= begindatum.Value.Date && r.ReservatieDetail.Date <= einddatum.Value.Date).Select(r => MapReservatie.MapToDomain(r)).ToList();
             }
             catch (Exception ex)
             {
@@ -67,11 +92,23 @@ namespace RestaurantDL.Repositories
             }
         }
 
-        public List<Reservatie> GeefReservatiesVanRestaurant(Restaurant restaurant)
+        public List<Reservatie> GeefReservatiesVanGebruikerOpDatum(int id, DateTime? datum)
         {
             try
             {
-                return ctx.Reservatie.Where(r => r.RestaurantInfo.RestaurantID == restaurant.ID).Select(r => MapReservatie.MapToDomain(r)).ToList();
+                return ctx.Reservatie.Include(r => r.RestaurantInfo).ThenInclude(r => r.Locatie).Include(r => r.RestaurantInfo.Tafels).Include(r => r.ContactPersoon).ThenInclude(c => c.Locatie).Where(r => r.ContactPersoon.Id == id && r.ReservatieDetail.Date == datum.Value.Date).Select(r => MapReservatie.MapToDomain(r)).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("GeefReservatiesVanGebruikerOpDatum - Er is een fout opgetreden", ex);
+            }
+        }
+
+        public List<Reservatie> GeefReservatiesVanRestaurant(int restaurantId)
+        {
+            try
+            {
+                return ctx.Reservatie.Include(r => r.RestaurantInfo).ThenInclude(r => r.Locatie).Include(r => r.RestaurantInfo.Tafels).Include(r => r.ContactPersoon).ThenInclude(c => c.Locatie).Where(r => r.RestaurantInfo.RestaurantID == restaurantId).Select(r => MapReservatie.MapToDomain(r)).ToList();
             }
             catch (Exception ex)
             {
@@ -79,11 +116,23 @@ namespace RestaurantDL.Repositories
             }
         }
 
+        public List<Reservatie> GeefReservatiesVoorgebruikerOpDatum(int id, DateTime? datumB, DateTime? datumE)
+        {
+            try
+            {
+                return ctx.Reservatie.Include(r => r.RestaurantInfo).ThenInclude(r => r.Locatie).Include(r => r.RestaurantInfo.Tafels).Include(r => r.ContactPersoon).ThenInclude(c => c.Locatie).Where(r =>r.ContactPersoon.Id == id && r.ReservatieDetail.Date >= datumB && r.ReservatieDetail.Date <= datumE).Select(r => MapReservatie.MapToDomain(r)).ToList();
+            }
+            catch (Exception)
+            {
+                throw new RepositoryException("GeefReservatiesVoorgebruikerOpDatum - Er is een fout opgetreden");
+            }
+        }
+
         public bool IsDezelfde(Reservatie reservatie)
         {
             try
             {
-                return ctx.Reservatie.Any(r => r.ID == reservatie.ReservatieID && r.Datum == reservatie.Datum && r.AantalPlaatsen == reservatie.AantalPlaatsen && r.ContactPersoon.Id == reservatie.ContactPersoon.Id && r.RestaurantInfo.RestaurantID == reservatie.RestaurantInfo.ID);
+                return ctx.Reservatie.Any(r => r.ID == reservatie.ReservatieID && r.ReservatieDetail == reservatie.ReservatieDetail && r.AantalPlaatsen == reservatie.AantalPlaatsen && r.ContactPersoon.Id == reservatie.ContactPersoon.Id && r.RestaurantInfo.RestaurantID == reservatie.RestaurantInfo.ID);
             }
             catch (Exception ex)
             {
@@ -91,12 +140,25 @@ namespace RestaurantDL.Repositories
             }
         }
 
-        public void UpdateReservatie(Reservatie reservatie)
+        public bool TafelHeeftReservaties(int tafelnummer)
         {
             try
             {
-                ctx.Reservatie.Attach(MapReservatie.MapToDB(reservatie, ctx));
+                return ctx.Reservatie.Any(r => r.Tafelnummer == tafelnummer);
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("TafelHeeftReservaties - Er is een fout opgetreden", ex);
+            }
+        }
+
+        public Reservatie UpdateReservatie(Reservatie reservatie)
+        {
+            try
+            {
+                ctx.Reservatie.Update(MapReservatie.MapToDB(reservatie, ctx));
                 ctx.SaveChanges();
+                return MapReservatie.MapToDomain(ctx.Reservatie.Include(r => r.RestaurantInfo.Tafels).Include(r => r.ContactPersoon).ThenInclude(c => c.Locatie).OrderBy(r => r.ID).Where(r => r.ID == reservatie.ReservatieID).FirstOrDefault());
             }
             catch (Exception ex)
             {
@@ -104,11 +166,11 @@ namespace RestaurantDL.Repositories
             }
         }
 
-        public void VerwijderReservatie(Reservatie reservatie)
+        public void VerwijderReservatie(int reservatieid)
         {
             try
             {
-                ReservatieEF res = MapReservatie.MapToDB(reservatie, ctx);
+                ReservatieEF res = ctx.Reservatie.Find(reservatieid);
                 res.Verwijderd = true;
                 ctx.Reservatie.Update(res);
                 ctx.SaveChanges();
@@ -119,13 +181,13 @@ namespace RestaurantDL.Repositories
             }
         }
 
-        public int VoegReservatieToe(Reservatie reservatie)
+        public Reservatie VoegReservatieToe(Reservatie reservatie)
         {
             try
             {
                 ctx.Reservatie.Add(MapReservatie.MapToDB(reservatie, ctx));
                 ctx.SaveChanges();
-                return ctx.Reservatie.Last().ID;
+                return MapReservatie.MapToDomain(ctx.Reservatie.Include(r => r.RestaurantInfo.Tafels).Include(r => r.ContactPersoon).OrderBy(r => r.ID).Last());
             }
             catch (Exception ex)
             {

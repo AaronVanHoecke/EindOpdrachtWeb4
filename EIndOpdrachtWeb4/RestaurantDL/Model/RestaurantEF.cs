@@ -21,11 +21,10 @@ namespace RestaurantDL.Model
         public string Email { get; set; }
         [Required]
         public string Telefoonnummer { get; set; }
-        public List<ReservatieEF> Reserveringen { get; private set; }
         public List<TafelEF> Tafels { get; private set; }
         public bool Verwijderd { get; set; }
 
-        public RestaurantEF(int resaurantID, string naam, LocatieEF locatie, string keuken, string email, string telefoonnummer, List<ReservatieEF> reserveringen, List<TafelEF> tafels)
+        public RestaurantEF(int resaurantID, string naam, LocatieEF locatie, string keuken, string email, string telefoonnummer, List<TafelEF> tafels)
         {
             RestaurantID = resaurantID;
             Naam = naam;
@@ -33,7 +32,7 @@ namespace RestaurantDL.Model
             Keuken = keuken;
             Email = email;
             Telefoonnummer = telefoonnummer;
-            Reserveringen = reserveringen;
+
             Tafels = tafels;
             Verwijderd = false;
         }
@@ -45,7 +44,6 @@ namespace RestaurantDL.Model
             Keuken = keuken;
             Email = email;
             Telefoonnummer = telefoonnummer;
-            Reserveringen = new List<ReservatieEF>();
             Tafels = new List<TafelEF>();
             Verwijderd = false;
         }

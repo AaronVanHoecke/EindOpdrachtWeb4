@@ -15,7 +15,7 @@ namespace RestaurantDL.Mappers
         {
 			try
 			{
-                return new Tafel(tafel.ID, tafel.RestaurantID, tafel.AantalStoelen, tafel.Beschikbaar);
+                return new Tafel(tafel.ID, tafel.AantalStoelen, tafel.TafelNummer, tafel.RestaurantID);
             }
 			catch (Exception ex)
 			{
@@ -31,11 +31,11 @@ namespace RestaurantDL.Mappers
                 if (t != null)
                 {
                     t.AantalStoelen = tafel.AantalStoelen;
-                    t.Beschikbaar = tafel.Beschikbaar;
+                    t.TafelNummer = tafel.Tafelnummer;
                     t.RestaurantID = tafel.RestaurantID;
                     return t;
                 }
-                return new TafelEF(tafel.AantalStoelen, tafel.Beschikbaar, tafel.RestaurantID);
+                return new TafelEF(tafel.AantalStoelen,tafel.Tafelnummer , tafel.RestaurantID);
             }
             catch (Exception ex)
             {

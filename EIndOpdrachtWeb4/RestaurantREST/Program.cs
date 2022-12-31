@@ -9,6 +9,8 @@ string connectionString = @"Data Source=WINDOWS-ISGC24U\SQLEXPRESS;Initial Catal
 builder.Services.AddControllers();
 builder.Services.AddSingleton<IRestaurantRepository>(r => new RestaurantRepository(connectionString));
 builder.Services.AddSingleton<RestaurantManager>();
+builder.Services.AddSingleton<IReservatieRepository>(r => new ReservatieRepository(connectionString));
+builder.Services.AddSingleton<ReservatieManager>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestaurantBL.Managers;
 using RestaurantBL.Model;
+using RestaurantDL.Migrations;
+using RestaurantRESTbeheerder.Mappers;
 using RestaurantRESTgebruiker.Mappers;
 using RestaurantRESTgebruiker.Model.Input;
 using RestaurantRESTgebruiker.Model.Output;
@@ -103,6 +105,91 @@ namespace RestaurantRESTgebruiker.Controllers
                 List<Restaurant> res = restaurantManager.GeefRestaurantsOpDatum(datum, aantalPlaatsen);
                 List<RestaurantRESToutputDTO> restaurantDTO = res.Select(r => MapRestaurantFromDomain.MapFromDomain(r.ID, restaurantManager)).ToList();
                 return Ok(restaurantDTO);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost("/reservering")]
+        public IActionResult VoegReserveringToe([FromBody] ReservatieRESTinputDTO reservatie)
+        {
+            try
+            {
+                Restaurant resto = restaurantManager.GeefRestaurant(reservatie.RestaurantID);
+                Gebruiker g = gebruikerManager.GeefGebruiker(reservatie.GebruikerID);
+                Tafel t = restaurantManager.GeefBeschikbareTafel(reservatie.RestaurantID, reservatie.Datum, reservatie.AantalPlaatsen);
+                Reservatie r = MapReservatieToDomain.MapToDomain(reservatie, t, g, resto);
+                r = reserveringManager.VoegReservatieToe(r);
+                return CreatedAtAction(nameof(GeefReservatie), new { id = r.ReservatieID }, MapReservatieFromDomain.MapFromDomain(r));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("/reservering/{id}")]
+        public ActionResult<ReservatieRESToutputDTO> GeefReservatie(int id)
+        {
+            try
+            {
+                Reservatie r = reserveringManager.GeefReservatie(id);
+                ReservatieRESToutputDTO reservatieDTO = MapReservatieFromDomain.MapFromDomain(r);
+                return Ok(reservatieDTO);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPut("/reservering/{id}")]
+        public IActionResult UpdateReservatie(int id, [FromBody] ReservatieRESTinputDTO reservatie)
+        {
+            try
+            {
+                if (!reserveringManager.BestaatReservatie(id)) return BadRequest("Reservatie bestaat niet");
+                Restaurant resto = restaurantManager.GeefRestaurant(reservatie.RestaurantID);
+                Gebruiker g = gebruikerManager.GeefGebruiker(reservatie.GebruikerID);
+                Tafel t = restaurantManager.GeefBeschikbareTafel(reservatie.RestaurantID, reservatie.Datum, reservatie.AantalPlaatsen);
+                Reservatie r = MapReservatieToDomain.MapToDomain(reservatie, t, g, resto);
+                r.ZetId(id);
+                r = reserveringManager.UpdateReservatie(r);
+                return CreatedAtAction(nameof(GeefReservatie), new { id = r.ReservatieID }, MapReservatieFromDomain.MapFromDomain(r));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("/reservering/{id}")]
+        public IActionResult VerwijderReservatie(int id)
+        {
+            try
+            {
+                if (!reserveringManager.BestaatReservatie(id)) return BadRequest("Reservatie bestaat niet");
+                Reservatie res = reserveringManager.GeefReservatie(id);
+                reserveringManager.VerwijderReservatie(res);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("/reservering/gebruiker")]
+        public ActionResult<ReservatieRESToutputDTO> GeefReservatiesVoorgebruikerOpDatum([FromQuery] int gebruikerID, [FromQuery] DateTime? datumB, [FromQuery] DateTime? datumE)
+        {
+            try
+            {
+                Gebruiker g = gebruikerManager.GeefGebruiker(gebruikerID);
+                List<Reservatie> res = reserveringManager.GeefReservatiesVoorgebruikerOpDatum(g, datumB, datumE);
+                List<ReservatieRESToutputDTO> reservatieDTO = res.Select(r => MapReservatieFromDomain.MapFromDomain(r)).ToList();
+                return Ok(reservatieDTO);
             }
             catch (Exception e)
             {

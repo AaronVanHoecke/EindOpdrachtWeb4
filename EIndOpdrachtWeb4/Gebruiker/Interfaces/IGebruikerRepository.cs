@@ -15,5 +15,6 @@ namespace RestaurantBL.Interfaces
         bool BestaatGebruiker(int gebruikerId);
         bool IsDezelfde(Gebruiker gebruiker);
         Gebruiker GeefGebruiker(int gebruikerId);
+        bool GebruikerHeeftReservaties(int gebruikerId);
     }
 }

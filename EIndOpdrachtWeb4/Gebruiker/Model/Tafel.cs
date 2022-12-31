@@ -10,17 +10,17 @@ namespace RestaurantBL.Model
     public class Tafel
     {
         public int ID { get; private set; }
-        public int RestaurantID { get; private set; }
         public int AantalStoelen { get; private set; }
-        public bool Beschikbaar { get; set; }
-        public Tafel(int aantalStoelen, int restaurantID, bool beschikbaar)
+        public int RestaurantID { get; private set; }
+        public int Tafelnummer { get; private set; }
+        public Tafel(int aantalStoelen, int tafelnummer, int restaurantId)
         {
             ZetStoelen(aantalStoelen);
-            Beschikbaar = beschikbaar;
-            RestaurantID = restaurantID;
+            ZetTafelnummer(tafelnummer);
+            RestaurantID = restaurantId;
         }
 
-        public Tafel(int iD, int restaurantID, int aantalStoelen, bool beschikbaar) : this(aantalStoelen, restaurantID, beschikbaar)
+        public Tafel(int iD, int aantalStoelen, int tafelnummer, int restaurantId) : this(aantalStoelen, tafelnummer, restaurantId)
         {
             ZetId(iD);
         }
@@ -35,6 +35,13 @@ namespace RestaurantBL.Model
         {
             if (id <= 0) throw new TafelException("Id moet groter zijn dan 0");
             ID = id;
+        }
+
+        public void ZetTafelnummer(int tafelnummer)
+        {
+
+            if (tafelnummer <= 0) throw new TafelException("Tafelnummer moet groter zijn dan 0");
+            Tafelnummer = tafelnummer;
         }
     }
 }

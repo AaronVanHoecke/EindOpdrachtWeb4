@@ -12,9 +12,11 @@ namespace RestaurantBL.Managers
     public class RestaurantManager
     {
         private IRestaurantRepository restaurantRepo;
-        public RestaurantManager(IRestaurantRepository restaurantRepo)
+        private IReservatieRepository reservatieRepo;
+        public RestaurantManager(IRestaurantRepository restaurantRepo, IReservatieRepository reservatieRepo)
         {
             this.restaurantRepo = restaurantRepo;
+            this.reservatieRepo = reservatieRepo;
         }
 
         public Restaurant VoegRestaurantToe(Restaurant restaurant)
@@ -51,6 +53,7 @@ namespace RestaurantBL.Managers
             try
             {
                 if (restaurantId == null) throw new RestaurantManagerException("VerwijderRestaurant - RestaurantId mag niet null zijn");
+                if (reservatieRepo.GeefReservatiesVanRestaurant(restaurantId).Any()) throw new RestaurantManagerException("VerwijderRestaurant - Restaurant heeft nog reservaties");
                 if (!restaurantRepo.BestaatRestaurant(restaurantId)) throw new RestaurantManagerException("VerwijderRestaurant - Restaurant bestaat niet");
                 restaurantRepo.VerwijderRestaurant(restaurantId);
             }
@@ -67,6 +70,7 @@ namespace RestaurantBL.Managers
             {
                 if (tafel == null) throw new RestaurantManagerException("VoegTafelToe - Tafel mag niet null zijn");
                 if (!restaurantRepo.BestaatRestaurant(tafel.RestaurantID)) throw new RestaurantManagerException("VoegTafelToe - Restaurant bestaat niet");
+                if (restaurantRepo.BestaatTafel(tafel)) throw new RestaurantManagerException("VoegTafelToe - Tafelbestaat al");
                 return restaurantRepo.VoegTafelToe(tafel);
             }
             catch (Exception ex)
@@ -99,6 +103,7 @@ namespace RestaurantBL.Managers
                 if (tafel == null) throw new RestaurantManagerException("VerwijderTafel - Tafel mag niet null zijn");
                 if (!restaurantRepo.BestaatRestaurant(restaurantId)) throw new RestaurantManagerException("VerwijderTafel - Restaurant bestaat niet");
                 if (!restaurantRepo.BestaatTafel(tafel)) throw new RestaurantManagerException("VerwijderTafel - Tafel bestaat niet");
+                if (reservatieRepo.TafelHeeftReservaties(tafel.Tafelnummer)) throw new RestaurantManagerException("VerwijderTafel - Tafel heeft nog reservaties");
                 restaurantRepo.VerwijderTafel(restaurantId, tafel.ID);
             }
             catch (Exception ex)
@@ -175,6 +180,14 @@ namespace RestaurantBL.Managers
         {
             if (aantalPlaatsen <= 0) throw new RestaurantManagerException("GeefRestaurantsOpDatum - Aantal plaatsen moet groter zijn dan 0");
             return restaurantRepo.GeefRestaurantsOpDatum(datum, aantalPlaatsen);
+        }
+
+        public Tafel GeefBeschikbareTafel(int restaurantId, DateTime datum, int aantalPlaatsen)
+        {
+            if (restaurantId == null) throw new RestaurantManagerException("GeefBeschikbareTafel - Restaurant mag niet null zijn");
+            if (aantalPlaatsen <= 0) throw new RestaurantManagerException("GeefBeschikbareTafel - Aantal plaatsen moet groter zijn dan 0");
+            if (!restaurantRepo.BestaatRestaurant(restaurantId)) throw new RestaurantManagerException("GeefBeschikbareTafel - Restaurant bestaat niet");
+            return restaurantRepo.GeefBeschikbareTafel(restaurantId, datum, aantalPlaatsen);
         }
     }
 }

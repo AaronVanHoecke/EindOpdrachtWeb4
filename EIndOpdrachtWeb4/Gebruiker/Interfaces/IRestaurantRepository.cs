@@ -32,5 +32,6 @@ namespace RestaurantBL.Interfaces
         List<Restaurant> GeefRestaurant(string keuken);
         List<Restaurant> GeefRestaurantPostcode(int postcode);
         List<Restaurant> GeefRestaurantsOpDatum(DateTime datum, int aantalPlaatsen);
+        Tafel GeefBeschikbareTafel(int restaurantId, DateTime datum, int aantalPlaatsen);
     }
 }

@@ -18,33 +18,29 @@ namespace RestaurantDL.Model
         [Required]
         public int AantalPlaatsen { get; set; }
         [Required]
-        public DateTime Datum { get; set; }
-        [Required]
-        public int Uur { get; set; }
+        public DateTime ReservatieDetail { get; set; }
         [Required]
         public int Tafelnummer { get; set; }
 
         public bool Verwijderd { get; set; }
 
-        public ReservatieEF(int reservatieID, RestaurantEF restaurantInfo, GebruikerEF contactPersoon, int aantalPlaatsen, DateTime datum, int uur, int tafelnummer)
+        public ReservatieEF(int reservatieID, RestaurantEF restaurantInfo, GebruikerEF contactPersoon, int aantalPlaatsen, DateTime reservatiedetail, int tafelnummer)
         {
             ID = reservatieID;
             RestaurantInfo = restaurantInfo;
             ContactPersoon = contactPersoon;
             AantalPlaatsen = aantalPlaatsen;
-            Datum = datum;
-            Uur = uur;
+            ReservatieDetail = reservatiedetail;
             Tafelnummer = tafelnummer;
             Verwijderd = false;
         }
 
-        public ReservatieEF(RestaurantEF restaurantInfo, GebruikerEF contactPersoon, int aantalPlaatsen, DateTime datum, int uur, int tafelnummer)
+        public ReservatieEF(RestaurantEF restaurantInfo, GebruikerEF contactPersoon, int aantalPlaatsen, DateTime reservatiedetail, int tafelnummer)
         {
             RestaurantInfo = restaurantInfo;
             ContactPersoon = contactPersoon;
             AantalPlaatsen = aantalPlaatsen;
-            Datum = datum;
-            Uur = uur;
+            ReservatieDetail = reservatiedetail;
             Tafelnummer = tafelnummer;
             Verwijderd = false;
         }

@@ -52,6 +52,7 @@ namespace RestaurantBL.Managers
             {
                 if (gebruikerId == null) throw new GebruikerManagerException("VerwijderGebruiker - Gebruiker mag niet null zijn");
                 if (!gebruikerRepo.BestaatGebruiker(gebruikerId)) throw new GebruikerManagerException("VerwijderGebruiker - Gebruiker bestaat niet");
+                if (gebruikerRepo.GebruikerHeeftReservaties(gebruikerId)) throw new GebruikerManagerException("VerwijderGebruiker - Gebruiker heeft nog reservaties");
                 gebruikerRepo.VerwijderGebruiker(gebruikerId);
             }
             catch (Exception ex)
@@ -72,7 +73,7 @@ namespace RestaurantBL.Managers
                 throw new GebruikerManagerException("GeefGebruiker - Er is een fout opgetreden", ex);
             }
         }
-
+        
         public bool BestaatGebruiker(int id)
         {
             try

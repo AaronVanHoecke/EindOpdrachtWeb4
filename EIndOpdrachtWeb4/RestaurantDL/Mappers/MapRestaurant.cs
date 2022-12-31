@@ -15,7 +15,7 @@ namespace RestaurantDL.Mappers
         {
             try
             {
-                return new Restaurant(db.RestaurantID, db.Naam, MapLocatie.MapToDomain(db.Locatie), db.Keuken, db.Telefoonnummer, db.Email, db.Reserveringen.Select(res => MapReservatie.MapToDomain(res)).ToList(), db.Tafels.Select(t => MapTafel.MapToDomain(t)).ToList());
+                return new Restaurant(db.RestaurantID, db.Naam, MapLocatie.MapToDomain(db.Locatie), db.Keuken, db.Telefoonnummer, db.Email, db.Tafels.Select(t => MapTafel.MapToDomain(t)).ToList());
             }
             catch (Exception e)
             {

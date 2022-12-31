@@ -4,15 +4,15 @@
     {
         public int ID { get; private set; }
         public int RestaurantID { get; private set; }
+        public int Tafelnummer { get; private set; }
         public int AantalStoelen { get; private set; }
-        public bool Beschikbaar { get; set; }
-        
-        public TafelRESToutputDTO(int iD, int restaurantID, int aantalStoelen, bool beschikbaar)
+
+        public TafelRESToutputDTO(int iD, int restaurantID, int aantalStoelen, int tafelnummer)
         {
             ID = iD;
             RestaurantID = restaurantID;
             AantalStoelen = aantalStoelen;
-            Beschikbaar = beschikbaar;
+            Tafelnummer = tafelnummer;
         }
     }
 }

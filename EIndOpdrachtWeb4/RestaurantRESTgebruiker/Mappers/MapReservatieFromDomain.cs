@@ -1,6 +1,6 @@
 ﻿using RestaurantBL.Model;
-using RestaurantRESTbeheerder.Exceptions;
-using RestaurantRESTbeheerder.Model.Output;
+using RestaurantRESTgebruiker.Exceptions;
+using RestaurantRESTgebruiker.Model.Output;
 
 namespace RestaurantRESTbeheerder.Mappers
 {
@@ -10,7 +10,7 @@ namespace RestaurantRESTbeheerder.Mappers
         {
 			try
 			{
-                return new ReservatieRESToutputDTO(res.ReservatieID, res.RestaurantInfo, res.ContactPersoon, res.AantalPlaatsen, res.ReservatieDetail, res.Tafelnummer);
+                return new ReservatieRESToutputDTO(res.ReservatieID, res.RestaurantInfo.ID, res.ContactPersoon.Naam, res.AantalPlaatsen, res.ReservatieDetail, res.Tafelnummer);
             }
 			catch (Exception e)
 			{

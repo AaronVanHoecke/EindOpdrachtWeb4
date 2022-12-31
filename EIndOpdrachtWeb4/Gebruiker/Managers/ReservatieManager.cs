@@ -18,11 +18,12 @@ namespace RestaurantBL.Managers
             this.reservatieRepo = reservatieRepo;
         }
 
-        public int VoegReservatieToe(Reservatie reservatie)
+        public Reservatie VoegReservatieToe(Reservatie reservatie)
         {
             try
             {
                 if (reservatie == null) throw new ReservatieManagerException("Reservatie mag niet null zijn.");
+                if (reservatieRepo.BestaatReservatie(reservatie)) throw new ReservatieManagerException("Reservatie bestaat al.");
                 return reservatieRepo.VoegReservatieToe(reservatie);
             }
             catch (Exception)
@@ -31,14 +32,15 @@ namespace RestaurantBL.Managers
             }
         }
 
-        public void UpdateReservatie(Reservatie reservatie)
+        public Reservatie UpdateReservatie(Reservatie reservatie)
         {
             try
             {
                 if (reservatie == null) throw new ReservatieManagerException("Reservatie mag niet null zijn.");
-                if (!reservatieRepo.BestaatReservatie(reservatie)) throw new ReservatieManagerException("Reservatie bestaat niet.");
+                if (!reservatieRepo.BestaatReservatie(reservatie.ReservatieID)) throw new ReservatieManagerException("Reservatie bestaat niet.");
+                if (reservatie.ReservatieDetail < DateTime.Now) throw new ReservatieManagerException("Reservatie is al geweest.");
                 if (reservatieRepo.IsDezelfde(reservatie)) throw new ReservatieManagerException("Reservatie is dezelfde.");
-                reservatieRepo.UpdateReservatie(reservatie);
+                return reservatieRepo.UpdateReservatie(reservatie);
             }
             catch (Exception ex)
             {
@@ -51,8 +53,9 @@ namespace RestaurantBL.Managers
             try
             {
                 if (reservatie == null) throw new ReservatieManagerException("Reservatie mag niet null zijn.");
-                if (!reservatieRepo.BestaatReservatie(reservatie)) throw new ReservatieManagerException("Reservatie bestaat niet.");
-                reservatieRepo.VerwijderReservatie(reservatie);
+                if (!reservatieRepo.BestaatReservatie(reservatie.ReservatieID)) throw new ReservatieManagerException("Reservatie bestaat niet.");
+                if (reservatie.ReservatieDetail < DateTime.Now) throw new ReservatieManagerException("Reservatie is al geweest.");
+                reservatieRepo.VerwijderReservatie(reservatie.ReservatieID);
             }
             catch (Exception ex)
             {
@@ -62,10 +65,32 @@ namespace RestaurantBL.Managers
 
         public IReadOnlyList<Reservatie> GeefReservaties(Restaurant? restaurant, Gebruiker? gebruiker, DateTime? begindatum, DateTime? einddatum)
         {
-            if (restaurant != null) return reservatieRepo.GeefReservatiesVanRestaurant(restaurant).AsReadOnly();
+            if (restaurant != null) return reservatieRepo.GeefReservatiesVanRestaurant(restaurant.ID).AsReadOnly();
             if (gebruiker != null) return reservatieRepo.GeefReservatiesVanGebruiker(gebruiker).AsReadOnly();
             if (begindatum.HasValue || einddatum.HasValue) return reservatieRepo.GeefReservatiesOpDatum(begindatum, einddatum).AsReadOnly();
             return reservatieRepo.GeefReservaties().AsReadOnly();
+        }
+
+        public Reservatie GeefReservatie(int id)
+        {
+            if (id <= 0) throw new ReservatieManagerException("Id moet groter zijn dan 0.");
+            if (!reservatieRepo.BestaatReservatie(id)) throw new ReservatieManagerException("Reservatie bestaat niet.");
+            return reservatieRepo.GeefReservatie(id);
+        }
+
+        public bool BestaatReservatie(int id)
+        {
+            if (id <= 0) throw new ReservatieManagerException("Id moet groter zijn dan 0.");
+            return reservatieRepo.BestaatReservatie(id);
+        }
+
+        public List<Reservatie> GeefReservatiesVoorgebruikerOpDatum(Gebruiker g, DateTime? datumB, DateTime? datumE)
+        {
+            if (g.Id <= 0) throw new ReservatieManagerException("Id moet groter zijn dan 0.");
+            if (datumB.HasValue && datumE.HasValue) return reservatieRepo.GeefReservatiesVoorgebruikerOpDatum(g.Id, datumB, datumE);
+            if (datumB.HasValue) return reservatieRepo.GeefReservatiesVanGebruikerOpDatum(g.Id, datumB);
+            if (datumE.HasValue) return reservatieRepo.GeefReservatiesVanGebruikerOpDatum(g.Id, datumE);
+            return reservatieRepo.GeefReservatiesVanGebruiker(g);
         }
     }
 }
