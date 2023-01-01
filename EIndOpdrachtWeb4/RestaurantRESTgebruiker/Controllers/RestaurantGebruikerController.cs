@@ -2,10 +2,12 @@
 using RestaurantBL.Managers;
 using RestaurantBL.Model;
 using RestaurantDL.Migrations;
+using RestaurantDL.Model;
 using RestaurantRESTbeheerder.Mappers;
 using RestaurantRESTgebruiker.Mappers;
 using RestaurantRESTgebruiker.Model.Input;
 using RestaurantRESTgebruiker.Model.Output;
+using System;
 
 namespace RestaurantRESTgebruiker.Controllers
 {
@@ -27,7 +29,8 @@ namespace RestaurantRESTgebruiker.Controllers
         {
             try
             {
-                GebruikerRESToutputDTO gebruikerDTO = MapGebruikerFromDomain.MapFromDomain(id, gebruikerManager);
+                Gebruiker gebruiker = gebruikerManager.GeefGebruiker(id);
+                GebruikerRESToutputDTO gebruikerDTO = MapGebruikerFromDomain.MapFromDomain(gebruiker);
                 return Ok(gebruikerDTO);
             }
             catch (Exception e)
@@ -42,7 +45,7 @@ namespace RestaurantRESTgebruiker.Controllers
             {
                 Gebruiker g = MapGebruikerToDomain.MapToDomain(gebruiker);
                 g = gebruikerManager.VoegGebruikerToe(g);
-                return CreatedAtAction(nameof(GeefGebruiker), new { id = g.Id }, MapGebruikerFromDomain.MapFromDomain(g.Id, gebruikerManager));
+                return CreatedAtAction(nameof(GeefGebruiker), new { id = g.Id }, MapGebruikerFromDomain.MapFromDomain(g));
             }
             catch (Exception ex)
             {
@@ -59,7 +62,7 @@ namespace RestaurantRESTgebruiker.Controllers
                 Gebruiker g = MapGebruikerToDomain.MapToDomain(gebruiker);
                 g.ZetId(id);
                 g = gebruikerManager.UpdateGebruiker(g);
-                return CreatedAtAction(nameof(GeefGebruiker), new { id = g.Id }, MapGebruikerFromDomain.MapFromDomain(g.Id, gebruikerManager));
+                return CreatedAtAction(nameof(GeefGebruiker), new { id = g.Id }, MapGebruikerFromDomain.MapFromDomain(g));
             }
             catch (Exception ex)
             {
@@ -83,12 +86,12 @@ namespace RestaurantRESTgebruiker.Controllers
         }
 
         [HttpGet("/filter")]
-        public ActionResult<RestaurantRESToutputDTO> GeefRestaurant([FromQuery]int? postcode, [FromQuery]string? keuken)
+        public ActionResult<RestaurantRESToutputDTO> GeefRestaurant([FromQuery] int? postcode, [FromQuery] string? keuken)
         {
             try
             {
                 List<Restaurant> res = restaurantManager.GeefRestaurants(postcode, keuken);
-                List<RestaurantRESToutputDTO> restaurantDTO = res.Select(r => MapRestaurantFromDomain.MapFromDomain(r.ID, restaurantManager)).ToList();
+                List<RestaurantRESToutputDTO> restaurantDTO = res.Select(r => MapRestaurantFromDomain.MapFromDomain(r)).ToList();
                 return Ok(restaurantDTO);
             }
             catch (Exception e)
@@ -98,12 +101,12 @@ namespace RestaurantRESTgebruiker.Controllers
         }
 
         [HttpGet("/restaurant")]
-        public ActionResult<RestaurantRESToutputDTO> GeefRestaurant([FromQuery] DateTime datum , [FromQuery] int aantalPlaatsen)
+        public ActionResult<RestaurantRESToutputDTO> GeefRestaurant([FromQuery] DateTime datum, [FromQuery] int aantalPlaatsen)
         {
             try
             {
                 List<Restaurant> res = restaurantManager.GeefRestaurantsOpDatum(datum, aantalPlaatsen);
-                List<RestaurantRESToutputDTO> restaurantDTO = res.Select(r => MapRestaurantFromDomain.MapFromDomain(r.ID, restaurantManager)).ToList();
+                List<RestaurantRESToutputDTO> restaurantDTO = res.Select(r => MapRestaurantFromDomain.MapFromDomain(r)).ToList();
                 return Ok(restaurantDTO);
             }
             catch (Exception e)
@@ -117,6 +120,13 @@ namespace RestaurantRESTgebruiker.Controllers
         {
             try
             {
+                double atMinuteInBlock = reservatie.Datum.TimeOfDay.TotalMinutes % 30;
+                if (atMinuteInBlock < 15) reservatie.Datum = reservatie.Datum.AddMinutes(-atMinuteInBlock);
+                else
+                {
+                    double minutesToAdd = 30 - atMinuteInBlock;
+                    reservatie.Datum = reservatie.Datum.AddMinutes(minutesToAdd);
+                }
                 Restaurant resto = restaurantManager.GeefRestaurant(reservatie.RestaurantID);
                 Gebruiker g = gebruikerManager.GeefGebruiker(reservatie.GebruikerID);
                 Tafel t = restaurantManager.GeefBeschikbareTafel(reservatie.RestaurantID, reservatie.Datum, reservatie.AantalPlaatsen);

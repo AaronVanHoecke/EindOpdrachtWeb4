@@ -7,7 +7,7 @@ namespace RestaurantRESTbeheerder.Mappers
 {
     public static class MapTafelFromDomain
     {
-        public static TafelRESToutputDTO MapFromDomain(Tafel t, RestaurantManager rm)
+        public static TafelRESToutputDTO MapFromDomain(Tafel t)
         {
             try
             {

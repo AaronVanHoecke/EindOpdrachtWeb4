@@ -24,7 +24,8 @@ namespace RestaurantRESTbeheerder.Controllers
         {
             try
             {
-                RestaurantRESToutputDTO restaurantDTO = MapRestaurantFromDomain.MapFromDomain(id, restaurantManager);
+                Restaurant restaurant = restaurantManager.GeefRestaurant(id);
+                RestaurantRESToutputDTO restaurantDTO = MapRestaurantFromDomain.MapFromDomain(restaurant);
                 return Ok(restaurantDTO);
             }
             catch (Exception e)
@@ -39,7 +40,7 @@ namespace RestaurantRESTbeheerder.Controllers
             try
             {
                 Restaurant r = restaurantManager.VoegRestaurantToe(MapRestaurantToDomain.MapToDomain(restaurant));
-                return CreatedAtAction(nameof(GeefRestaurant), new { id = r.ID }, MapRestaurantFromDomain.MapFromDomain(r.ID, restaurantManager));
+                return CreatedAtAction(nameof(GeefRestaurant), new { id = r.ID }, MapRestaurantFromDomain.MapFromDomain(r));
             }
             catch (Exception ex)
             {
@@ -57,7 +58,7 @@ namespace RestaurantRESTbeheerder.Controllers
                 Restaurant r = MapRestaurantToDomain.MapToDomain(restaurant);
                 r.ZetId(id);
                 r = restaurantManager.UpdateRestaurant(r);
-                return CreatedAtAction(nameof(GeefRestaurant), new { id = r.ID }, MapRestaurantFromDomain.MapFromDomain(r.ID, restaurantManager));
+                return CreatedAtAction(nameof(GeefRestaurant), new { id = r.ID }, MapRestaurantFromDomain.MapFromDomain(r));
             }
             catch (Exception ex)
             {
@@ -104,7 +105,7 @@ namespace RestaurantRESTbeheerder.Controllers
             {
                 if (!restaurantManager.BestaatRestaurant(restaurantId)) return NotFound("Restaurant bestaat niet");
                 Tafel t = restaurantManager.VoegTafelToe(MapTafelToDomain.MapToDomain(tafel, restaurantId));
-                return CreatedAtAction(nameof(GeefTafel), new { id = t.ID, restaurantId = t.RestaurantID}, MapTafelFromDomain.MapFromDomain(t, restaurantManager));
+                return CreatedAtAction(nameof(GeefTafel), new { id = t.ID, restaurantId = t.RestaurantID}, MapTafelFromDomain.MapFromDomain(t));
             }
             catch (Exception e)
             {
@@ -120,7 +121,7 @@ namespace RestaurantRESTbeheerder.Controllers
             {
                 if (!restaurantManager.BestaatRestaurant(restaurantId)) return NotFound("Restaurant bestaat niet");
                 Tafel t = restaurantManager.GeefTafel(id, restaurantId);
-                return Ok(MapTafelFromDomain.MapFromDomain(t, restaurantManager));
+                return Ok(MapTafelFromDomain.MapFromDomain(t));
             }
             catch (Exception e)
             {
@@ -138,7 +139,7 @@ namespace RestaurantRESTbeheerder.Controllers
                 t.ZetId(id);
                 if (!restaurantManager.BestaatTafel(t)) return NotFound("Tafel bestaat niet");
                 t = restaurantManager.UpdateTafel(restaurantId, t);
-                return CreatedAtAction(nameof(GeefTafel), new { id = t.ID, restaurantId = t.RestaurantID }, MapTafelFromDomain.MapFromDomain(t, restaurantManager));
+                return CreatedAtAction(nameof(GeefTafel), new { id = t.ID, restaurantId = t.RestaurantID }, MapTafelFromDomain.MapFromDomain(t));
             }
             catch (Exception ex)
             {

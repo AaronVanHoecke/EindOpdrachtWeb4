@@ -7,11 +7,10 @@ namespace RestaurantRESTgebruiker.Mappers
 {
     public static class MapGebruikerFromDomain
     {
-        public static GebruikerRESToutputDTO MapFromDomain(int gebruikerId, GebruikerManager gm)
+        public static GebruikerRESToutputDTO MapFromDomain(Gebruiker gebruiker)
         {
             try
             {
-                Gebruiker gebruiker = gm.GeefGebruiker(gebruikerId);
                 return new GebruikerRESToutputDTO(gebruiker.Id, gebruiker.Naam, gebruiker.Email, gebruiker.Telefoonnummer, gebruiker.Locatie);
             }
             catch (Exception ex)
