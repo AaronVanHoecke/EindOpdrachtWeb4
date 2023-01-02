@@ -18,13 +18,15 @@ namespace RestaurantRESTgebruiker.Controllers
         private RestaurantManager restaurantManager;
         private GebruikerManager gebruikerManager;
         private ReservatieManager reserveringManager;
-        public RestaurantGebruikerController(RestaurantManager restaurantManager, GebruikerManager gebruikerManager, ReservatieManager reserveringManager)
+        private readonly ILogger logger;
+        public RestaurantGebruikerController(RestaurantManager restaurantManager, GebruikerManager gebruikerManager, ReservatieManager reserveringManager, ILoggerFactory logger)
         {
             this.restaurantManager = restaurantManager;
             this.gebruikerManager = gebruikerManager;
             this.reserveringManager = reserveringManager;
+            this.logger = logger.AddFile("LogGebruiker.txt").CreateLogger("GebruikerLogger");
         }
-        [HttpGet("{id}")]
+        [HttpGet("GeefGebruiker/{id}")]
         public ActionResult<GebruikerRESToutputDTO> GeefGebruiker(int id)
         {
             try
@@ -38,7 +40,7 @@ namespace RestaurantRESTgebruiker.Controllers
                 return BadRequest(e.Message);
             }
         }
-        [HttpPost]
+        [HttpPost("VoegGebruikerToe")]
         public IActionResult VoegGebruikerToe([FromBody] GebruikerRESTinputDTO gebruiker)
         {
             try
@@ -53,12 +55,12 @@ namespace RestaurantRESTgebruiker.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("UpdateGebruiker/{id}")]
         public IActionResult UpdateGebruiker(int id, [FromBody] GebruikerRESTinputDTO gebruiker)
         {
             try
             {
-                if (!gebruikerManager.BestaatGebruiker(id)) return BadRequest("Gebruiker bestaat niet");
+                if (!gebruikerManager.BestaatGebruiker(id)) return NotFound("Gebruiker bestaat niet");
                 Gebruiker g = MapGebruikerToDomain.MapToDomain(gebruiker);
                 g.ZetId(id);
                 g = gebruikerManager.UpdateGebruiker(g);
@@ -70,12 +72,12 @@ namespace RestaurantRESTgebruiker.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("VerwijderGebruiker/{id}")]
         public IActionResult VerwijderGebruiker(int id)
         {
             try
             {
-                if (!gebruikerManager.BestaatGebruiker(id)) return BadRequest("Gebruiker bestaat niet");
+                if (!gebruikerManager.BestaatGebruiker(id)) return NotFound("Gebruiker bestaat niet");
                 gebruikerManager.VerwijderGebruiker(id);
                 return NoContent();
             }
@@ -85,7 +87,7 @@ namespace RestaurantRESTgebruiker.Controllers
             }
         }
 
-        [HttpGet("/filter")]
+        [HttpGet("GeefRestaurant/filter")]
         public ActionResult<RestaurantRESToutputDTO> GeefRestaurant([FromQuery] int? postcode, [FromQuery] string? keuken)
         {
             try
@@ -100,7 +102,7 @@ namespace RestaurantRESTgebruiker.Controllers
             }
         }
 
-        [HttpGet("/restaurant")]
+        [HttpGet("GeefRestaurant")]
         public ActionResult<RestaurantRESToutputDTO> GeefRestaurant([FromQuery] DateTime datum, [FromQuery] int aantalPlaatsen)
         {
             try
@@ -115,7 +117,7 @@ namespace RestaurantRESTgebruiker.Controllers
             }
         }
 
-        [HttpPost("/reservering")]
+        [HttpPost("VoegReserveringToe")]
         public IActionResult VoegReserveringToe([FromBody] ReservatieRESTinputDTO reservatie)
         {
             try
@@ -140,7 +142,7 @@ namespace RestaurantRESTgebruiker.Controllers
             }
         }
 
-        [HttpGet("/reservering/{id}")]
+        [HttpGet("GeefReservatie/{id}")]
         public ActionResult<ReservatieRESToutputDTO> GeefReservatie(int id)
         {
             try
@@ -155,12 +157,19 @@ namespace RestaurantRESTgebruiker.Controllers
             }
         }
 
-        [HttpPut("/reservering/{id}")]
+        [HttpPut("UpdateReservatie/{id}")]
         public IActionResult UpdateReservatie(int id, [FromBody] ReservatieRESTinputDTO reservatie)
         {
             try
             {
-                if (!reserveringManager.BestaatReservatie(id)) return BadRequest("Reservatie bestaat niet");
+                if (!reserveringManager.BestaatReservatie(id)) return NotFound("Reservatie bestaat niet");
+                double atMinuteInBlock = reservatie.Datum.TimeOfDay.TotalMinutes % 30;
+                if (atMinuteInBlock < 15) reservatie.Datum = reservatie.Datum.AddMinutes(-atMinuteInBlock);
+                else
+                {
+                    double minutesToAdd = 30 - atMinuteInBlock;
+                    reservatie.Datum = reservatie.Datum.AddMinutes(minutesToAdd);
+                }
                 Restaurant resto = restaurantManager.GeefRestaurant(reservatie.RestaurantID);
                 Gebruiker g = gebruikerManager.GeefGebruiker(reservatie.GebruikerID);
                 Tafel t = restaurantManager.GeefBeschikbareTafel(reservatie.RestaurantID, reservatie.Datum, reservatie.AantalPlaatsen);
@@ -175,12 +184,12 @@ namespace RestaurantRESTgebruiker.Controllers
             }
         }
 
-        [HttpDelete("/reservering/{id}")]
+        [HttpDelete("VerwijderReservatie/{id}")]
         public IActionResult VerwijderReservatie(int id)
         {
             try
             {
-                if (!reserveringManager.BestaatReservatie(id)) return BadRequest("Reservatie bestaat niet");
+                if (!reserveringManager.BestaatReservatie(id)) return NotFound("Reservatie bestaat niet");
                 Reservatie res = reserveringManager.GeefReservatie(id);
                 reserveringManager.VerwijderReservatie(res);
                 return NoContent();
@@ -196,6 +205,7 @@ namespace RestaurantRESTgebruiker.Controllers
         {
             try
             {
+                if (!gebruikerManager.BestaatGebruiker(gebruikerID)) return NotFound("Gebruiker bestaat niet");
                 Gebruiker g = gebruikerManager.GeefGebruiker(gebruikerID);
                 List<Reservatie> res = reserveringManager.GeefReservatiesVoorgebruikerOpDatum(g, datumB, datumE);
                 List<ReservatieRESToutputDTO> reservatieDTO = res.Select(r => MapReservatieFromDomain.MapFromDomain(r)).ToList();

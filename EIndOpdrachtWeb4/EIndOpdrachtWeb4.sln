@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestaurantDL", "RestaurantD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestaurantRESTbeheerder", "RestaurantREST\RestaurantRESTbeheerder.csproj", "{16E8E21B-AE29-425F-8C58-0B4611537675}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestaurantRESTgebruiker", "RestaurantRESTgebruiker\RestaurantRESTgebruiker.csproj", "{DF449878-5C32-47A0-9620-B7D428FA4E65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestaurantRESTgebruiker", "RestaurantRESTgebruiker\RestaurantRESTgebruiker.csproj", "{DF449878-5C32-47A0-9620-B7D428FA4E65}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestREST", "UnitTestREST\UnitTestREST.csproj", "{689F802D-FD3D-4A25-9BA5-8809E92700D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{DF449878-5C32-47A0-9620-B7D428FA4E65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF449878-5C32-47A0-9620-B7D428FA4E65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF449878-5C32-47A0-9620-B7D428FA4E65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{689F802D-FD3D-4A25-9BA5-8809E92700D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{689F802D-FD3D-4A25-9BA5-8809E92700D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{689F802D-FD3D-4A25-9BA5-8809E92700D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{689F802D-FD3D-4A25-9BA5-8809E92700D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

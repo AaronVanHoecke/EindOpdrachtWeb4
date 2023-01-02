@@ -48,6 +48,10 @@ namespace RestaurantBL.Model
             Email = email;
         }
 
+        public Restaurant()
+        {
+        }
+
         public void ZetNaam(string naam)
         {
             if (string.IsNullOrWhiteSpace(naam)) throw new RestaurantException("Naam mag niet leeg zijn");

@@ -33,6 +33,10 @@ namespace RestaurantBL.Model
             Locatie = locatie;
         }
 
+        public Gebruiker()
+        {
+        }
+
         public void ZetNaam(string naam)
         {
             if (string.IsNullOrWhiteSpace(naam)) throw new GebruikerException("ZetNaam - Naam mag niet leeg zijn");

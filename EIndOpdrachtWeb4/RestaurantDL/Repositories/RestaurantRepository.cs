@@ -103,7 +103,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return ctx.Reservatie.Where(r => r.RestaurantInfo.RestaurantID == id && r.ReservatieDetail == datum).Select(r => MapReservatie.MapToDomain(r)).ToList();
+                return ctx.Reservatie.Where(r => r.RestaurantInfo.RestaurantID == id && r.ReservatieDetail.Date == datum.Date).Include(r => r.RestaurantInfo).ThenInclude(r => r.Locatie).Include(r => r.RestaurantInfo.Tafels).Include(r => r.ContactPersoon).ThenInclude(c => c.Locatie).Select(r => MapReservatie.MapToDomain(r)).ToList();
             }
             catch (Exception ex)
             {
@@ -223,7 +223,7 @@ namespace RestaurantDL.Repositories
         {
             try
             {
-                return ctx.Restaurant.Any(r => r.Naam == restaurant.Naam && r.Locatie.StraatNaam == restaurant.Locatie.StraatNaam && r.Email == restaurant.Email && r.Telefoonnummer == restaurant.Telefoonnummer);
+                return ctx.Restaurant.Any(r => r.Naam == restaurant.Naam && r.Locatie.StraatNaam == restaurant.Locatie.StraatNaam && r.Email == restaurant.Email && r.Telefoonnummer == restaurant.Telefoonnummer && r.Locatie.Huisnummer == restaurant.Locatie.Huisnummer && r.Locatie.Postcode == restaurant.Locatie.Postcode);
             }
             catch (Exception ex)
             {

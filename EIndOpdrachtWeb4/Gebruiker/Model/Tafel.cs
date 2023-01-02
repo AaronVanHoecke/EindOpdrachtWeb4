@@ -25,6 +25,10 @@ namespace RestaurantBL.Model
             ZetId(iD);
         }
 
+        public Tafel()
+        {
+        }
+
         public void ZetStoelen(int aantalStoelen)
         {
             if (aantalStoelen <= 0) throw new TafelException("Aantal stoelen moet groter zijn dan 0");

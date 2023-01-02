@@ -1,0 +1,1 @@
+2023-01-02T19:00:41.8278527+01:00  [INF] Request "GET" "/api/RestaurantBeheer/GeefRestaurant/5" => 200 (1e06f36d)

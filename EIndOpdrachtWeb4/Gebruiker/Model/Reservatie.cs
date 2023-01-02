@@ -39,10 +39,16 @@ namespace RestaurantBL.Model
             Tafelnummer = tafelnummer;
         }
 
+        public Reservatie()
+        {
+        }
+
         public void ZetId(int id)
         {
             if (id <= 0) throw new ReservatieException("Id moet groter zijn dan 0");
             ReservatieID = id;
         }
+
+        
     }
 }

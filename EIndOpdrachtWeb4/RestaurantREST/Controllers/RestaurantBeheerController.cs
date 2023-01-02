@@ -14,16 +14,19 @@ namespace RestaurantRESTbeheerder.Controllers
     public class RestaurantBeheerController: ControllerBase
     {
         private RestaurantManager restaurantManager;
-        public RestaurantBeheerController(RestaurantManager restaurantManager)
+        private readonly ILogger logger;
+        public RestaurantBeheerController(RestaurantManager restaurantManager, ILoggerFactory logger)
         {
             this.restaurantManager = restaurantManager;
+            this.logger = logger.AddFile("LogBeheerder.txt").CreateLogger("BeheerderLogger");
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GeefRestaurant/{id}")]
         public ActionResult<RestaurantRESToutputDTO> GeefRestaurant(int id)
         {
             try
             {
+                if (!restaurantManager.BestaatRestaurant(id)) return NotFound();
                 Restaurant restaurant = restaurantManager.GeefRestaurant(id);
                 RestaurantRESToutputDTO restaurantDTO = MapRestaurantFromDomain.MapFromDomain(restaurant);
                 return Ok(restaurantDTO);
@@ -34,7 +37,7 @@ namespace RestaurantRESTbeheerder.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("VoegRestaurantToe")]
         public ActionResult<RestaurantRESToutputDTO> VoegRestaurantToe([FromBody] RestaurantRESTinputDTO restaurant)
         {
             try
@@ -49,7 +52,7 @@ namespace RestaurantRESTbeheerder.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("UpdateRestaurant/{id}")]
         public IActionResult UpdateRestaurant(int id, [FromBody] RestaurantRESTinputDTO restaurant)
         {
             try
@@ -66,7 +69,7 @@ namespace RestaurantRESTbeheerder.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteRestaurant/{id}")]
         public IActionResult DeleteRestaurant(int id)
         {
             try
@@ -82,8 +85,8 @@ namespace RestaurantRESTbeheerder.Controllers
             }
         }
 
-        [HttpGet("{id}/{datum}")]
-        public ActionResult<ReservatieRESToutputDTO> GeefReservatieOpDatum(int id, DateTime datum)
+        [HttpGet("GeefReservatiesOpDatum/{id}/{datum}")]
+        public ActionResult<ReservatieRESToutputDTO> GeefReservatiesOpDatum(int id, DateTime datum)
         {
             try
             {
@@ -148,7 +151,7 @@ namespace RestaurantRESTbeheerder.Controllers
         }
 
         [HttpDelete("DeleteTafel/{id}/{restaurantId}")]
-        public IActionResult DeleteRestaurant(int id, int restaurantId)
+        public IActionResult VerwijderTafel(int id, int restaurantId)
         {
             try
             {
